@@ -1,0 +1,382 @@
+[
+  {
+    "id": "java-fullstack",
+    "title": "Java Full Stack Development",
+    "category": "Development",
+    "instructor": "John Doe",
+    "instructorAvatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=john",
+    "duration": "12h 30m",
+    "totalLessons": 18,
+    "level": "Intermediate",
+    "rating": 4.8,
+    "students": 3241,
+    "description": "Master Java from core fundamentals to building full-stack web applications using Spring Boot, REST APIs, and modern frontend integration.",
+    "image": "https://picsum.photos/seed/java/800/450",
+    "tags": ["Java", "Spring Boot", "REST API", "SQL"],
+    "modules": [
+      {
+        "id": "mod-1",
+        "title": "Java Fundamentals",
+        "passMark": 70,
+        "lessons": [
+          {
+            "id": "les-1-1",
+            "title": "Introduction to Java & JVM",
+            "durationSeconds": 286,
+            "videoUrl": "https://www.w3schools.com/html/mov_bbb.mp4"
+          },
+          {
+            "id": "les-1-2",
+            "title": "Data Types, Variables & Operators",
+            "durationSeconds": 368,
+            "videoUrl": "https://www.w3schools.com/html/movie.mp4"
+          },
+          {
+            "id": "les-1-3",
+            "title": "Control Flow & Loops",
+            "durationSeconds": 286,
+            "videoUrl": "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm"
+          }
+        ],
+        "assessment": {
+          "id": "asmnt-1",
+          "title": "Java Fundamentals Quiz",
+          "passMark": 70,
+          "attemptsAllowed": 3,
+          "questions": [
+            {
+              "id": "q1",
+              "text": "What does JVM stand for?",
+              "type": "mcq",
+              "options": [
+                { "id": "q1a", "text": "Java Virtual Machine", "isCorrect": true },
+                { "id": "q1b", "text": "Java Variable Method", "isCorrect": false },
+                { "id": "q1c", "text": "Java Verified Module", "isCorrect": false },
+                { "id": "q1d", "text": "Just Viable Machine", "isCorrect": false }
+              ]
+            },
+            {
+              "id": "q2",
+              "text": "Which keyword is used to declare a constant in Java?",
+              "type": "mcq",
+              "options": [
+                { "id": "q2a", "text": "const", "isCorrect": false },
+                { "id": "q2b", "text": "final", "isCorrect": true },
+                { "id": "q2c", "text": "static", "isCorrect": false },
+                { "id": "q2d", "text": "immutable", "isCorrect": false }
+              ]
+            },
+            {
+              "id": "q3",
+              "text": "Java is a platform-independent language.",
+              "type": "truefalse",
+              "options": [
+                { "id": "q3a", "text": "True", "isCorrect": true },
+                { "id": "q3b", "text": "False", "isCorrect": false }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "mod-2",
+        "title": "Object-Oriented Programming",
+        "passMark": 70,
+        "lessons": [
+          {
+            "id": "les-2-1",
+            "title": "Classes, Objects & Constructors",
+            "durationSeconds": 286,
+            "videoUrl": "https://www.w3schools.com/html/mov_bbb.mp4"
+          },
+          {
+            "id": "les-2-2",
+            "title": "Inheritance & Polymorphism",
+            "durationSeconds": 368,
+            "videoUrl": "https://www.w3schools.com/html/movie.mp4"
+          }
+        ],
+        "assessment": {
+          "id": "asmnt-2",
+          "title": "OOP Concepts Quiz",
+          "passMark": 70,
+          "attemptsAllowed": 3,
+          "questions": [
+            {
+              "id": "q4",
+              "text": "Which OOP pillar allows a class to inherit from another?",
+              "type": "mcq",
+              "options": [
+                { "id": "q4a", "text": "Encapsulation", "isCorrect": false },
+                { "id": "q4b", "text": "Abstraction", "isCorrect": false },
+                { "id": "q4c", "text": "Inheritance", "isCorrect": true },
+                { "id": "q4d", "text": "Polymorphism", "isCorrect": false }
+              ]
+            },
+            {
+              "id": "q5",
+              "text": "Method overriding is an example of compile-time polymorphism.",
+              "type": "truefalse",
+              "options": [
+                { "id": "q5a", "text": "True", "isCorrect": false },
+                { "id": "q5b", "text": "False", "isCorrect": true }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "mod-3",
+        "title": "Spring Boot & REST APIs",
+        "passMark": 70,
+        "lessons": [
+          {
+            "id": "les-3-1",
+            "title": "Spring Boot Setup & Auto-config",
+            "durationSeconds": 286,
+            "videoUrl": "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm"
+          },
+          {
+            "id": "les-3-2",
+            "title": "Building REST Controllers",
+            "durationSeconds": 368,
+            "videoUrl": "https://www.w3schools.com/html/mov_bbb.mp4"
+          },
+          {
+            "id": "les-3-3",
+            "title": "Database Integration with JPA",
+            "durationSeconds": 286,
+            "videoUrl": "https://www.w3schools.com/html/movie.mp4"
+          }
+        ],
+        "assessment": {
+          "id": "asmnt-3",
+          "title": "Spring Boot Quiz",
+          "passMark": 70,
+          "attemptsAllowed": 3,
+          "questions": [
+            {
+              "id": "q6",
+              "text": "Which annotation marks a Spring Boot application entry point?",
+              "type": "mcq",
+              "options": [
+                { "id": "q6a", "text": "@SpringApplication", "isCorrect": false },
+                { "id": "q6b", "text": "@SpringBootApplication", "isCorrect": true },
+                { "id": "q6c", "text": "@EnableSpring", "isCorrect": false },
+                { "id": "q6d", "text": "@Main", "isCorrect": false }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "react-beginners",
+    "title": "React for Beginners",
+    "category": "Development",
+    "instructor": "Jane Smith",
+    "instructorAvatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=jane",
+    "duration": "8h",
+    "totalLessons": 12,
+    "level": "Beginner",
+    "rating": 4.9,
+    "students": 5120,
+    "description": "Learn React from scratch. Build real-world projects with components, hooks, state management and more.",
+    "image": "https://picsum.photos/seed/react/800/450",
+    "tags": ["React", "JavaScript", "Hooks", "JSX"],
+    "modules": [
+      {
+        "id": "mod-r1",
+        "title": "React Basics",
+        "passMark": 70,
+        "lessons": [
+          {
+            "id": "les-r1-1",
+            "title": "What is React & Why Use It?",
+            "durationSeconds": 286,
+            "videoUrl": "https://www.w3schools.com/html/mov_bbb.mp4"
+          },
+          {
+            "id": "les-r1-2",
+            "title": "JSX & Components",
+            "durationSeconds": 368,
+            "videoUrl": "https://www.w3schools.com/html/movie.mp4"
+          }
+        ],
+        "assessment": {
+          "id": "asmnt-r1",
+          "title": "React Basics Quiz",
+          "passMark": 70,
+          "attemptsAllowed": 3,
+          "questions": [
+            {
+              "id": "qr1",
+              "text": "JSX stands for JavaScript XML.",
+              "type": "truefalse",
+              "options": [
+                { "id": "qr1a", "text": "True", "isCorrect": true },
+                { "id": "qr1b", "text": "False", "isCorrect": false }
+              ]
+            },
+            {
+              "id": "qr2",
+              "text": "Which hook manages state in a functional component?",
+              "type": "mcq",
+              "options": [
+                { "id": "qr2a", "text": "useEffect", "isCorrect": false },
+                { "id": "qr2b", "text": "useRef", "isCorrect": false },
+                { "id": "qr2c", "text": "useState", "isCorrect": true },
+                { "id": "qr2d", "text": "useContext", "isCorrect": false }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "mod-r2",
+        "title": "Hooks & State Management",
+        "passMark": 70,
+        "lessons": [
+          {
+            "id": "les-r2-1",
+            "title": "useState & useEffect Deep Dive",
+            "durationSeconds": 286,
+            "videoUrl": "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm"
+          },
+          {
+            "id": "les-r2-2",
+            "title": "Context API & useReducer",
+            "durationSeconds": 368,
+            "videoUrl": "https://www.w3schools.com/html/mov_bbb.mp4"
+          }
+        ],
+        "assessment": {
+          "id": "asmnt-r2",
+          "title": "Hooks Quiz",
+          "passMark": 70,
+          "attemptsAllowed": 3,
+          "questions": [
+            {
+              "id": "qr3",
+              "text": "useEffect runs after every render by default.",
+              "type": "truefalse",
+              "options": [
+                { "id": "qr3a", "text": "True", "isCorrect": true },
+                { "id": "qr3b", "text": "False", "isCorrect": false }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "ai-ml",
+    "title": "AI & Machine Learning",
+    "category": "AI",
+    "instructor": "Andrew Ng",
+    "instructorAvatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=andrew",
+    "duration": "15h",
+    "totalLessons": 20,
+    "level": "Advanced",
+    "rating": 4.7,
+    "students": 8903,
+    "description": "A comprehensive introduction to AI and ML. Learn supervised/unsupervised learning, neural networks, and Python implementations.",
+    "image": "https://picsum.photos/seed/aiml/800/450",
+    "tags": ["Python", "TensorFlow", "Neural Networks", "Data Science"],
+    "modules": [
+      {
+        "id": "mod-ai1",
+        "title": "ML Foundations",
+        "passMark": 70,
+        "lessons": [
+          {
+            "id": "les-ai1-1",
+            "title": "What is Machine Learning?",
+            "durationSeconds": 286,
+            "videoUrl": "https://www.w3schools.com/html/mov_bbb.mp4"
+          },
+          {
+            "id": "les-ai1-2",
+            "title": "Supervised vs Unsupervised Learning",
+            "durationSeconds": 368,
+            "videoUrl": "https://www.w3schools.com/html/movie.mp4"
+          }
+        ],
+        "assessment": {
+          "id": "asmnt-ai1",
+          "title": "ML Foundations Quiz",
+          "passMark": 70,
+          "attemptsAllowed": 3,
+          "questions": [
+            {
+              "id": "qai1",
+              "text": "Which type of ML uses labeled training data?",
+              "type": "mcq",
+              "options": [
+                { "id": "qai1a", "text": "Unsupervised Learning", "isCorrect": false },
+                { "id": "qai1b", "text": "Supervised Learning", "isCorrect": true },
+                { "id": "qai1c", "text": "Reinforcement Learning", "isCorrect": false },
+                { "id": "qai1d", "text": "Transfer Learning", "isCorrect": false }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "uiux-design",
+    "title": "UI/UX Design Basics",
+    "category": "Design",
+    "instructor": "Emily Clark",
+    "instructorAvatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=emily",
+    "duration": "6h",
+    "totalLessons": 10,
+    "level": "Beginner",
+    "rating": 4.6,
+    "students": 2187,
+    "description": "Learn UI/UX design principles. From wireframing to Figma prototyping, create beautiful user-centered digital experiences.",
+    "image": "https://picsum.photos/seed/uiux/800/450",
+    "tags": ["Figma", "Wireframing", "Prototyping", "Design Thinking"],
+    "modules": [
+      {
+        "id": "mod-ux1",
+        "title": "Design Thinking",
+        "passMark": 70,
+        "lessons": [
+          {
+            "id": "les-ux1-1",
+            "title": "Empathy & User Research",
+            "durationSeconds": 286,
+            "videoUrl": "https://www.youtube.com/watch?v=kQ7a0wRmRRY"
+          },
+          {
+            "id": "les-ux1-2",
+            "title": "Wireframing Fundamentals",
+            "durationSeconds": 368,
+            "videoUrl": "https://www.w3schools.com/html/mov_bbb.mp4"
+          }
+        ],
+        "assessment": {
+          "id": "asmnt-ux1",
+          "title": "Design Thinking Quiz",
+          "passMark": 70,
+          "attemptsAllowed": 3,
+          "questions": [
+            {
+              "id": "qux1",
+              "text": "The first stage of Design Thinking is Empathize.",
+              "type": "truefalse",
+              "options": [
+                { "id": "qux1a", "text": "True", "isCorrect": true },
+                { "id": "qux1b", "text": "False", "isCorrect": false }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

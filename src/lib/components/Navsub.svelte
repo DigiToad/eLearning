@@ -4,7 +4,7 @@
 	export let data;
 
 	let user = data?.authedUser; // 👈 Auth user
-	console.log(user, 'useruseruseruser');
+	// console.log(user, 'useruseruseruser');
 
 	let menus = [];
 	let activeMenu = null;

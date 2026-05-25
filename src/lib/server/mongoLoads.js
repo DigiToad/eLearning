@@ -1,16 +1,75 @@
-import Contactus from '$lib/server/models/Contact.js';
-import Events from '$lib/server/models/Events.js';
-import Products from '$lib/server/models/Component.js'
-import Partners from '$lib/server/models/Partners';
+// import Contactus from '$lib/server/models/Contact.js';
+// import Events from '$lib/server/models/Events.js';
+// import Products from '$lib/server/models/Component.js'
+// import Partners from '$lib/server/models/Partners';
 import User from '$lib/server/models/User.js'
-import Oems from '$lib/server/models/Oem.js'
-import Productdemo from '$lib/server/models/Productdemo.js'
-import Quote from '$lib/server/models/Quoteform.js'
-import Collab from '$lib/server/models/Collaborator.js';
-import Category from '$lib/server/models/Category.js'
-import WebinarFeedback from '$lib/server/models/Feedback.js';
+// import Oems from '$lib/server/models/Oem.js'
+// import Productdemo from '$lib/server/models/Productdemo.js'
+// import Quote from '$lib/server/models/Quoteform.js'
+// import Collab from '$lib/server/models/Collaborator.js';
+// import Category from '$lib/server/models/Category.js'
+// import WebinarFeedback from '$lib/server/models/Feedback.js';
 import { error } from '@sveltejs/kit';
 import { Course, CourseDraft } from '$lib/server/models/Courses.js';
+import { Courseinfo } from '$lib/server/models/Courseinfo.js';
+import { Section } from "$lib/server/models/Section.js";
+// export async function fetchCourseinfo() {
+//   try {
+//     const records = await Courseinfo.find().lean();
+
+//     return { records };
+//   } catch (error) {
+//     console.error("Failed to load CourseInfo:", error);
+
+//     return {
+//       records: [],
+//       totalCount: 0
+//     };
+//   }
+// }
+// course.service.js
+
+// import { Courseinfo } from "$lib/server/models/Courseinfo.js";
+// import { Section } from "$lib/server/models/Section.js";
+
+export async function fetchCourseinfo() {
+  try {
+
+    // fetch all courses
+    const courses = await Courseinfo.find().lean();
+
+    // fetch all sections
+    const sections = await Section.find().lean();
+
+    // merge sections into each course
+    const records = courses.map((course) => {
+
+      // match by courseId
+      const matchedSections = sections.find(
+        (sec) => sec.courseId === course.courseId
+      );
+
+      return {
+        ...course,
+
+        sections: matchedSections?.sections || []
+      };
+    });
+
+    return {
+      records,
+      totalCount: records.length
+    };
+
+  } catch (error) {
+    console.error("Failed to load CourseInfo:", error);
+
+    return {
+      records: [],
+      totalCount: 0
+    };
+  }
+}
 
 export async function fetchCourses(currentPage, search, filter) {
   if (!filter) {

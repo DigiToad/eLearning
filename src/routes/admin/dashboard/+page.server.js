@@ -2,16 +2,16 @@ import { redirect } from '@sveltejs/kit';
 import Profile from '$lib/server/models/Profile.js';
 import { signUp } from "$lib/server/mongoActions.js";
 import { ADMIN_EMAIL } from '$env/static/private';
-import Contactus from '$lib/server/models/Contact.js';
-import Events from '$lib/server/models/Events.js';
-import Products from '$lib/server/models/Component.js'
-import Partners from '$lib/server/models/Partners';
+// import Contactus from '$lib/server/models/Contact.js';
+// import Events from '$lib/server/models/Events.js';
+// import Products from '$lib/server/models/Component.js'
+// import Partners from '$lib/server/models/Partners';
 import User from '$lib/server/models/User.js'
-import Productdemo from '$lib/server/models/Productdemo.js';
-import Quote from '$lib/server/models/Quoteform.js';
-import Collaboration from '$lib/server/models/Collaborator.js';
-import Category from '$lib/server/models/Category.js';
-import WebinarFeedback from '$lib/server/models/Feedback.js';
+// import Productdemo from '$lib/server/models/Productdemo.js';
+// import Quote from '$lib/server/models/Quoteform.js';
+// import Collaboration from '$lib/server/models/Collaborator.js';
+// import Category from '$lib/server/models/Category.js';
+// import WebinarFeedback from '$lib/server/models/Feedback.js';
 // export const load = async ({ locals }) => {
 // 	if (!locals.user) {
 // 		throw redirect(302, '/admin/login');

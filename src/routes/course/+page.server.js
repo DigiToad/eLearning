@@ -1,51 +1,30 @@
 import { fail, redirect } from '@sveltejs/kit';
-import {
-  createCourseDraft,
-  uploadLesson,
-  uploadAssessment,
-  setModuleTitle,
-  publishCourse,
-  getAllCourses,
-  getAllDrafts,
-  getDraft
-} from '$lib/server/mongoActions.js';
+import { fetchCourseinfo } from '$lib/server/mongoLoads.js';
+import { error } from '@sveltejs/kit';
+import { Section } from '$lib/server/models/Section.js';
 
-// ─── Single Load Function ─────────────────────────────────────────────────────
-export async function load({ url }) {
-  const courseId  = url.searchParams.get('courseId');
-  const page      = parseInt(url.searchParams.get('page') ?? '1');
-  const search    = url.searchParams.get('search') ?? '';
-  const pageSize  = 10;
+export async function load() {
+    const records = await fetchCourseinfo();
 
-  try {
-    const [coursesResult, drafts] = await Promise.all([
-      getAllCourses({ page, search, pageSize }),
-      getAllDrafts()
-    ]);
+    // Fetch section counts for all courses
+    const sectionDocs = await Section.find({}, { courseId: 1, sections: 1 }).lean();
 
-    let activeDraft = null;
-    if (courseId) {
-      activeDraft = await getDraft(courseId);
+    // Build a map: courseId → section count
+    const sectionCountMap = {};
+    for (const doc of sectionDocs) {
+        sectionCountMap[doc.courseId] = doc.sections?.length ?? 0;
     }
 
+    // Attach section count to each course
+    const courses = JSON.parse(JSON.stringify(records));
+    const enriched = (courses.records ?? courses).map(course => ({
+        ...course,
+        sectionsCount: sectionCountMap[course.courseId] ?? 0,
+    }));
+
     return {
-      courses:     JSON.parse(JSON.stringify(coursesResult.records)),
-      courseId :courseId,
-      totalCount:  coursesResult.totalCount,
-      drafts:      JSON.parse(JSON.stringify(drafts)),
-      activeDraft: activeDraft ? JSON.parse(JSON.stringify(activeDraft)) : null,
-      currentPage: page,
-      search
+        courseInfo: {
+            records: enriched,
+        },
     };
-  } catch (err) {
-    console.error('Course load error:', err);
-    return {
-      courses:     [],
-      totalCount:  0,
-      drafts:      [],
-      activeDraft: null,
-      currentPage: 1,
-      search:      ''
-    };
-  }
 }

@@ -35,35 +35,23 @@ import { Section } from "$lib/server/models/Section.js";
 export async function fetchCourseinfo() {
   try {
 
-    // fetch all courses
-    const courses = await Courseinfo.find().lean();
-
-    // fetch all sections
+    const courses = await Courseinfo.find({ status: "published" }).lean();
     const sections = await Section.find().lean();
-
-    // merge sections into each course
     const records = courses.map((course) => {
-
-      // match by courseId
       const matchedSections = sections.find(
         (sec) => sec.courseId === course.courseId
       );
-
       return {
         ...course,
-
         sections: matchedSections?.sections || []
       };
     });
-
     return {
       records,
       totalCount: records.length
     };
-
   } catch (error) {
     console.error("Failed to load CourseInfo:", error);
-
     return {
       records: [],
       totalCount: 0

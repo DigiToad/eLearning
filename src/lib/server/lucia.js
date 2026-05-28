@@ -4,7 +4,7 @@ import { User } from "$lib/server/models/User.js";
 import { Session } from "$lib/server/models/Session.js";
 import { Key } from "$lib/server/models/Key.js";
 import { LUCIA_SECRET } from "$env/static/private";
-
+import { dev } from "$app/environment";
 export const authErrorMessages = {
   AUTH_INVALID_KEY_ID: "Invalid email or username. Please check and try again.",
   AUTH_INVALID_KEY:
@@ -38,7 +38,8 @@ export const authErrorMessages = {
 
 export const auth = lucia({
   adapter: mongooseAdapter({ User, Key, Session }), 
-  env: "PROD", 
+  // env: "PROD", 
+  env: dev ? "DEV" : "PROD",
   secret: LUCIA_SECRET,
   cookies: {
     secure: true, 
@@ -52,6 +53,7 @@ export const auth = lucia({
   getUserAttributes: (databaseUser) => {
     return {
       username: databaseUser.username,
+       firstName: databaseUser.firstName, 
       email: databaseUser.email,
     };
   },

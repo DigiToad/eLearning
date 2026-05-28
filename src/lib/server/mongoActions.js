@@ -74,16 +74,30 @@ export const signUp = async (body, cookies) => {
     let luciaUser = null;
     try {
       luciaUser = await auth.createUser({
-        key: {
-          providerId: "email",
-          providerUserId: body.email,
-          password: body.password,
-        },
-        attributes: {
-          username: body.firstName,
-          email: body.email,
-        },
-      });
+    key: {
+        providerId: "email",
+        providerUserId: body.email,
+        password: body.password,
+    },
+    attributes: {
+        username: body.firstName,   // used as display name
+        email: body.email,
+        firstName: body.firstName,  // ← add these so getUserAttributes works
+        lastName: body.lastName,
+    },
+});
+
+      // luciaUser = await auth.createUser({
+      //   key: {
+      //     providerId: "email",
+      //     providerUserId: body.email,
+      //     password: body.password,
+      //   },
+      //   attributes: {
+      //     username: body.firstName,
+      //     email: body.email,
+      //   },
+      // });
       // console.log("Lucia user created successfully:", JSON.stringify(luciaUser, null, 2));
     } catch (error) {
       // console.error("ERROR creating Lucia user:", error);

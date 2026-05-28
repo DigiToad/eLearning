@@ -61,7 +61,8 @@ export const load = async ({ locals, url }) => {
                 name:        user.name           || profile.firstName        || '',
                 email:       user.email          || '',
                 phone:       profile.phone       || '',
-                institution: profile.institution || ''
+                institution: profile.institution || '',
+                accessedcourse : profile.acessedcourse || '',
             };
         });
 
@@ -95,28 +96,139 @@ export const load = async ({ locals, url }) => {
 };
 
 export const actions = {
+    // grantAccess: async ({ request }) => {
+    //     const formData = await request.formData();
+    //     const email       = formData.get('email');
+    //     const courseId    = formData.get('courseId');
+    //     const courseTitle = formData.get('courseTitle');
+
+    //     if (!email || !courseId || !courseTitle) {
+    //         return { success: false, message: 'email, courseId and courseTitle are required.' };
+    //     }
+
+    //     try {
+    //         // ── Your access-grant logic here ──────────────────────────────
+    //         // e.g. await Enrollment.create({ email, courseId, courseTitle, grantedAt: new Date() });
+    //         // ─────────────────────────────────────────────────────────────
+
+    //         console.log(`[grantAccess] email: ${email} | courseId: ${courseId} | course: ${courseTitle}`);
+    //         return { success: true, message: `Access granted to "${courseTitle}" for ${email}.` };
+    //     } catch (error) {
+    //         console.error('Error in grantAccess:', error);
+    //         return { success: false, message: 'Failed to grant access.' };
+    //     }
+    // },
     grantAccess: async ({ request }) => {
-        const formData = await request.formData();
+        const formData    = await request.formData();
         const email       = formData.get('email');
-        const courseId    = formData.get('courseId');
-        const courseTitle = formData.get('courseTitle');
-
-        if (!email || !courseId || !courseTitle) {
-            return { success: false, message: 'email, courseId and courseTitle are required.' };
+        const coursesJson = formData.get('coursesJson');
+ 
+        if (!email || !coursesJson) {
+            return { success: false, message: 'email and coursesJson are required.' };
         }
-
+ 
+        let courses;
         try {
-            // ── Your access-grant logic here ──────────────────────────────
-            // e.g. await Enrollment.create({ email, courseId, courseTitle, grantedAt: new Date() });
-            // ─────────────────────────────────────────────────────────────
-
-            console.log(`[grantAccess] email: ${email} | courseId: ${courseId} | course: ${courseTitle}`);
-            return { success: true, message: `Access granted to "${courseTitle}" for ${email}.` };
+            courses = JSON.parse(coursesJson);
+            if (!Array.isArray(courses) || courses.length === 0) throw new Error();
+        } catch {
+            return { success: false, message: 'coursesJson must be a non-empty JSON array.' };
+        }
+ 
+        try {
+            const courseIds = courses.map(c => c.courseId);
+ 
+            // Step 1: fetch current profile to check existing acessedcourse type
+            const profile = await Profile.findOne({ email }).lean();
+ 
+            if (!profile) {
+                return { success: false, message: `No profile found for ${email}.` };
+            }
+ 
+            const existing = profile.acessedcourse;
+ 
+            let currentArray = [];
+            if (Array.isArray(existing)) {
+                currentArray = existing;
+            } else if (existing && typeof existing === 'string') {
+                // Old doc — migrate: wrap the string into an array
+                currentArray = [existing];
+            }
+ 
+            // Merge, deduplicating
+            const merged = [...new Set([...currentArray, ...courseIds])];
+ 
+            // Step 2: overwrite with clean array (works regardless of old field type)
+            await Profile.updateOne(
+                { email },
+                { $set: { acessedcourse: merged } }
+            );
+ 
+            const label = courses.length === 1
+                ? `Access granted to "${courses[0].courseTitle}" for ${email}.`
+                : `Access granted to ${courses.length} courses for ${email}.`;
+ 
+            return { success: true, message: label };
+ 
         } catch (error) {
             console.error('Error in grantAccess:', error);
-            return { success: false, message: 'Failed to grant access.' };
+            return { success: false, message: 'Failed to grant access. ' + error.message };
         }
     },
+ 
+    revokeAccess: async ({ request }) => {
+        const formData    = await request.formData();
+        const email       = formData.get('email');
+        const coursesJson = formData.get('coursesJson');
+ 
+        if (!email || !coursesJson) {
+            return { success: false, message: 'email and coursesJson are required.' };
+        }
+ 
+        let courses;
+        try {
+            courses = JSON.parse(coursesJson);
+            if (!Array.isArray(courses) || courses.length === 0) throw new Error();
+        } catch {
+            return { success: false, message: 'coursesJson must be a non-empty JSON array.' };
+        }
+ 
+        try {
+            const courseIds = courses.map(c => String(c.courseId));
+ 
+            const profile = await Profile.findOne({ email }).lean();
+            if (!profile) {
+                return { success: false, message: `No profile found for ${email}.` };
+            }
+ 
+            const existing = profile.acessedcourse;
+            let currentArray = [];
+            if (Array.isArray(existing)) {
+                currentArray = existing.map(String);
+            } else if (existing && typeof existing === 'string') {
+                currentArray = [existing];
+            }
+ 
+            // Remove the revoked ones
+            const remaining = currentArray.filter(id => !courseIds.includes(id));
+ 
+            await Profile.updateOne(
+                { email },
+                { $set: { acessedcourse: remaining } }
+            );
+ 
+            const label = courses.length === 1
+                ? `Access revoked for "${courses[0].courseTitle}" from ${email}.`
+                : `Access revoked for ${courses.length} courses from ${email}.`;
+ 
+            return { success: true, message: label };
+ 
+        } catch (error) {
+            console.error('Error in revokeAccess:', error);
+            return { success: false, message: 'Failed to revoke access. ' + error.message };
+        }
+    },
+
 
     search: async ({ request, url }) => {
         // Search is handled via GET (load), this just redirects with query params

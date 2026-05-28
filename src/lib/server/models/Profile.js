@@ -7,17 +7,17 @@ const jsonSchema = {
 };
 const chemiDashProfileSchema = new mongoose.Schema(
   {
-    
+
     firstName: {
       type: String,
       required: false,
     },
-       lastName: {
+    lastName: {
       type: String,
       required: false,
     },
-    
-  
+
+
     email: {
       type: String,
       required: false,
@@ -28,7 +28,7 @@ const chemiDashProfileSchema = new mongoose.Schema(
       required: false,
       unique: true,
     },
-   institution: {
+    institution: {
       type: String,
       required: false,
       unique: true,
@@ -42,9 +42,10 @@ const chemiDashProfileSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-resetPasswordToken: { type: String },
-resetTokenExpiry: { type: Date }
-   
+    resetPasswordToken: { type: String },
+    resetTokenExpiry: { type: Date },
+    acessedcourse: { type: [String], default: [] }
+
   },
   {
     timestamps: true,

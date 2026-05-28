@@ -4,7 +4,7 @@
 
   export let data;
   const courses = data?.courseInfo?.records || [];
-  console.log(courses, "cogyuhjg");
+  // console.log(courses, "cogyuhjg");
 
   const levelColors = {
     Beginner: "bg-emerald-100 text-emerald-700",
@@ -98,8 +98,8 @@
     {#each courses as course (course._id ?? course.id)}
       <div
         class="group relative bg-[#1a1a2a] border border-white/10 rounded-2xl overflow-hidden flex flex-col hover:border-violet-500/50 hover:shadow-xl hover:shadow-violet-900/20 transition-all duration-300 cursor-pointer"
-        on:click={() => handleStart(course.id)}
-        on:keydown={(e) => e.key === "Enter" && handleStart(course.id)}
+        on:click={() => handleStart(course?.courseId)}
+        on:keydown={(e) => e.key === "Enter" && handleStart(course.courseId)}
         role="button"
         tabindex="0"
       >

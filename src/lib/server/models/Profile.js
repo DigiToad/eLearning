@@ -44,7 +44,18 @@ const chemiDashProfileSchema = new mongoose.Schema(
     },
     resetPasswordToken: { type: String },
     resetTokenExpiry: { type: Date },
-    acessedcourse: { type: [String], default: [] }
+    acessedcourse: { type: [String], default: [] },
+      // interestedcourse: { type: [String], default: [] }
+      interestedcourse: {
+  type: [{
+    courseId:    { type: String, required: true },
+    courseName:  { type: String, default: '' },
+    coursePrice: { type: String, default: '' },
+
+  }],
+  default: [],
+   _id:false
+}
 
   },
   {

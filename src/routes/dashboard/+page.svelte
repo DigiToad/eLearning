@@ -74,50 +74,7 @@
 
 
 <div class="min-h-screen bg-black text-white" style="font-family:'DM Sans',sans-serif;">
-
-	<!-- ══ Background blobs ══════════════════════════════════════════════════ -->
-	<!-- <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-		<div class="absolute -top-40 -left-40 w-[700px] h-[700px] rounded-full bg-violet-900/20 blur-[120px]"></div>
-		<div class="absolute top-1/2 -right-60 w-[500px] h-[500px] rounded-full bg-blue-900/15 blur-[100px]"></div>
-		<div class="absolute bottom-0 left-1/3 w-[400px] h-[400px] rounded-full bg-emerald-900/10 blur-[80px]"></div>
-	</div> -->
-
-	<!-- ══ Top Nav ═══════════════════════════════════════════════════════════ -->
-	<!-- <header class="relative z-20 border-b border-white/5 bg-[#080810]/80 backdrop-blur-xl sticky top-0">
-		<div class="max-w-7xl mx-auto px-5 h-16 flex items-center justify-between gap-4">
-			<button on:click={() => goto('/')} class="flex items-center gap-2.5 shrink-0">
-				<div class="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-blue-600 flex items-center justify-center">
-					<svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-					</svg>
-				</div>
-				<span class="font-bold text-sm tracking-tight" style="font-family:'Syne',sans-serif;">SkillsBlock</span>
-			</button>
-
-			<nav class="hidden md:flex items-center gap-1">
-				<button class="px-4 py-2 rounded-lg text-sm font-medium text-white bg-white/8 border border-white/10">
-					Dashboard
-				</button>
-				<button on:click={() => goto('/course')} class="px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 transition">
-					Browse Courses
-				</button>
-			</nav>
-
-			<div class="flex items-center gap-3 shrink-0">
-				<div class="w-9 h-9 rounded-full bg-gradient-to-br from-violet-600 to-blue-500 flex items-center justify-center text-sm font-bold text-white shrink-0">
-					{initials || '?'}
-				</div>
-				<div class="hidden sm:block">
-					<p class="text-sm font-semibold leading-none">{firstName} {lastName}</p>
-					<p class="text-xs text-gray-500 mt-0.5">{authedUser.email}</p>
-				</div>
-			</div>
-		</div>
-	</header> -->
-
 	<main class="relative z-10 max-w-7xl mx-auto px-5 py-10">
-
-		<!-- ══ Greeting ══════════════════════════════════════════════════════ -->
 		<div class="mb-10">
 			<p class="text-gray-500 text-sm mb-1">Welcome back 👋</p>
 			<h1 class="text-4xl font-black leading-none tracking-tight" style="font-family:'Syne',sans-serif;">
@@ -127,8 +84,6 @@
 				<p class="text-gray-500 text-sm mt-2">{profile.institution}{profile.branch ? ` · ${profile.branch}` : ''}</p>
 			{/if}
 		</div>
-
-		<!-- ══ Stats Row ══════════════════════════════════════════════════════ -->
 		<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
 			{#each statCards as s}
 				<div class="rounded-2xl border bg-gradient-to-br p-5 {s.color}">
@@ -139,12 +94,10 @@
 			{/each}
 		</div>
 
-		<!-- ══ Course Section Header ══════════════════════════════════════════ -->
 		<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
 			<h2 class="text-xl font-bold" style="font-family:'Syne',sans-serif;">My Courses</h2>
 
 			<div class="flex items-center gap-2 flex-wrap">
-				<!-- Filter tabs -->
 				<div class="flex items-center gap-1 bg-white/5 border border-white/10 rounded-xl p-1">
 					{#each [['all','All'],['in-progress','In Progress'],['completed','Done'],['not-started','New']] as [val, label]}
 						<button

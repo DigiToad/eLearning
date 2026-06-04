@@ -143,14 +143,14 @@
                 </div>
 
                 <div class="flex items-center gap-3">
-                    <a
+                    <!-- <a
                         href="/course/{course?.courseId}/preview"
                         target="_blank"
                         class="px-5 py-2.5 rounded-2xl border border-white/10 text-sm
                               font-semibold text-zinc-300 hover:bg-white/5 transition-all"
                     >
                         Preview ↗
-                    </a>
+                    </a> -->
 
                     {#if isPublished}
                         <form

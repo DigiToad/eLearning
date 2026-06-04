@@ -1,16 +1,8 @@
-// src/routes/dashboard/+page.server.js
+
 import { error, redirect } from '@sveltejs/kit';
 import { Courseinfo }    from '$lib/server/models/Courseinfo.js';
 import { UserProgress }  from '$lib/server/models/UserProgress.js';
-
-// ─────────────────────────────────────────────────────────────────────────────
-// ⚠️  CHANGE THIS import to match your actual Profile model file path.
-//    Common names: Profile, UserProfile, Student, User
 import Profile from '$lib/server/models/Profile.js';
-//          import { UserProfile } from '$lib/server/models/UserProfile.js';
-// ─────────────────────────────────────────────────────────────────────────────
-// import { Profile } from '$lib/server/models/Profile.js';
-
 export async function load({ locals }) {
     // ── Auth guard ────────────────────────────────────────────────────────────
     const rawUser = locals.user ?? null;

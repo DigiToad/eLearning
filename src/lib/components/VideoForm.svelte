@@ -2,20 +2,21 @@
     import { enhance } from "$app/forms";
     import Mediaupload from "$lib/components/Mediaupload.svelte";
 
-    export let lesson = null;
-    export let sectionId = "";
-    export let courseId = "";
+    export let lesson          = null;
+    export let sectionId       = "";
+    export let courseId        = "";
     export let moduleSectionId = "";
-    export let form = null;
+    export let form            = null;
 
-    let title    = "";
-    let videoUrl = "";
-    let duration = "";
+    let title            = "";
+    let videoUrl         = "";
+    let duration         = "";
     let submitting       = false;
     let errors           = {};
     let touched          = {};
     let durationDetected = false;
-    let mediaReady       = false;   // ← from Mediaupload
+    let mediaReady       = false;
+    let resetKey         = 0;
 
     // ── Sync only when lesson ID changes ────────────────────────────────────
     let lastLessonId = null;
@@ -27,12 +28,13 @@
         errors           = {};
         touched          = {};
         durationDetected = !!(lesson?.duration && Number(lesson.duration) > 0);
-        // existing lesson already has a processed video
         mediaReady       = !!(lesson?.videoUrl);
     }
 
     // ── Reset on success ────────────────────────────────────────────────────
-    $: if (form?.success && form?.type === "video") {
+    let lastFormSuccess = null;
+    $: if (form?.success && form?.type === "video" && form !== lastFormSuccess) {
+        lastFormSuccess  = form;
         title            = "";
         videoUrl         = "";
         duration         = "";
@@ -40,20 +42,20 @@
         touched          = {};
         durationDetected = false;
         mediaReady       = false;
+        submitting       = false;   // ← ensure spinner clears
         lastLessonId     = null;
+        resetKey        += 1;       // ← remounts Mediaupload completely
     }
 
     // ── Dirty check ─────────────────────────────────────────────────────────
     $: isDirty = lesson
-        ? (title.trim()    !== (lesson?.title    ?? "")  ||
-           videoUrl.trim() !== (lesson?.videoUrl ?? "")  ||
+        ? (title.trim()    !== (lesson?.title    ?? "") ||
+           videoUrl.trim() !== (lesson?.videoUrl ?? "") ||
            String(duration) !== String(lesson?.duration ?? ""))
         : true;
 
-    // ── Whether the submit button should be blocked ──────────────────────────
-    $: cannotSubmit = submitting
-        || (!!lesson && !isDirty)
-        || !mediaReady;
+    // ── Submit guard ────────────────────────────────────────────────────────
+    $: cannotSubmit = submitting || (!!lesson && !isDirty) || !mediaReady;
 
     // ── Validation ──────────────────────────────────────────────────────────
     function validate() {
@@ -76,7 +78,6 @@
 
     function enhanceVideo() {
         return ({ formData, cancel }) => {
-            // Guard: block if media not processed
             if (!mediaReady) {
                 cancel();
                 touched = { title: true, videoUrl: true };
@@ -99,7 +100,7 @@
             submitting = true;
             return async ({ update }) => {
                 await update({ reset: false });
-                submitting = false;
+                submitting = false;   // ← always reset here too
             };
         };
     }
@@ -122,7 +123,6 @@
         videoUrl && !embedUrl && videoUrl.match(/\.(mp4|webm|ogg)(\?|$)/i)
     );
 
-    // ── Auto-detect duration from direct video ───────────────────────────────
     function onVideoLoaded(e) {
         const d = e.target.duration;
         if (d && isFinite(d)) {
@@ -188,7 +188,10 @@
                     Video <span class="text-rose-400">*</span>
                 </label>
 
-                <Mediaupload type="video" bind:value={videoUrl} bind:ready={mediaReady} />
+                <!-- {#key resetKey} destroys & recreates Mediaupload fresh on every save -->
+                {#key resetKey}
+                    <Mediaupload type="video" bind:value={videoUrl} bind:ready={mediaReady} />
+                {/key}
 
                 {#if errors.videoUrl}
                     <p class="text-rose-400 text-xs mt-1.5 flex items-center gap-1">
@@ -212,6 +215,7 @@
                                 mediaReady       = false;
                                 touched.videoUrl = true;
                                 errors           = validate();
+                                resetKey        += 1;
                             }}
                             class="text-zinc-600 hover:text-rose-400 text-xs
                                    transition-colors flex-shrink-0 px-1"
@@ -308,7 +312,6 @@
                         {isDirty ? '● Unsaved changes' : '✓ No changes'}
                     </p>
                 {/if}
-                <!-- Processing warning -->
                 {#if !mediaReady && videoUrl}
                     <p class="text-amber-400 text-xs flex items-center gap-1">
                         <span>⚠</span> Process the video before saving

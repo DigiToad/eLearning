@@ -58,6 +58,32 @@ export async function fetchCourseinfo() {
     };
   }
 }
+export async function fetchCourseinfoadmin() {
+  try {
+
+    const courses = await Courseinfo.find({}).lean();
+    const sections = await Section.find().lean();
+    const records = courses.map((course) => {
+      const matchedSections = sections.find(
+        (sec) => sec.courseId === course.courseId
+      );
+      return {
+        ...course,
+        sections: matchedSections?.sections || []
+      };
+    });
+    return {
+      records,
+      totalCount: records.length
+    };
+  } catch (error) {
+    console.error("Failed to load CourseInfo:", error);
+    return {
+      records: [],
+      totalCount: 0
+    };
+  }
+}
 
 export async function fetchCourses(currentPage, search, filter) {
   if (!filter) {

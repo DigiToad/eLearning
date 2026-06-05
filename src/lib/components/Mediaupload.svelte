@@ -5,18 +5,18 @@
 
     export let type  = 'image';
     export let value = '';
-    export let ready = false;   // ← true only when safe to submit
+    export let ready = false;
 
     const dispatch = createEventDispatcher();
 
-    let inputType  = 'file';
-    let file       = null;
-    let previewUrl = '';
-    let filename   = '';
-    let selected   = false;
-    let uploaded   = false;
-    let error      = '';
-    let urlValue   = '';
+    let inputType   = 'file';
+    let file        = null;
+    let previewUrl  = '';
+    let filename    = '';
+    let selected    = false;
+    let uploaded    = false;
+    let error       = '';
+    let urlValue    = '';
     let initialised = false;
 
     $: isImage = type === 'image';
@@ -35,7 +35,22 @@
         initialised = true;
     });
 
-    $: if (initialised) value = filename;
+    // ── Reset when parent clears value (after successful save) ───────────────
+    let prevValue = value;
+    $: if (initialised && value === '' && prevValue !== '') {
+        file      = null;
+        previewUrl = '';
+        filename  = '';
+        urlValue  = '';
+        selected  = false;
+        uploaded  = false;
+        ready     = false;
+        error     = '';
+        inputType = 'file';
+        const input = document.getElementById(`upload-${type}`);
+        if (input) input.value = '';
+    }
+    $: prevValue = value;
 
     // ────────────────────────────────────────────────────────────────────────
     async function compressImage(file, maxWidth = 1920, maxHeight = 1080, quality = 0.8) {
@@ -92,7 +107,7 @@
                 filename   = sanitiseName(file.name);
                 previewUrl = URL.createObjectURL(file);
                 selected   = true;
-                ready      = false;   // must Process first
+                ready      = false;
                 toast.success(`Image ready (${(file.size / 1024).toFixed(2)} KB) — click Process`);
             } catch {
                 error = 'Failed to process image.'; toast.error(error);
@@ -108,7 +123,7 @@
             filename   = sanitiseName(file.name);
             previewUrl = URL.createObjectURL(file);
             selected   = true;
-            ready      = false;   // must Process first
+            ready      = false;
             toast.success(`Video selected (${(file.size / (1024 * 1024)).toFixed(2)} MB) — click Process`);
         }
     }
@@ -135,7 +150,8 @@
                 uploaded = true;
                 error    = '';
                 filename = result.url;
-                ready    = true;    // ← now safe to submit
+                value    = result.url;   // ← sync up to parent
+                ready    = true;
                 toast.success(`${label} processed successfully!`);
                 dispatch('change', { mode: 'file', value: result.url, file });
             } else {
@@ -151,9 +167,16 @@
     }
 
     function removeFile() {
-        file = null; previewUrl = ''; filename = '';
-        selected = false; uploaded = false; error = '';
-        urlValue = ''; ready = false;
+        file      = null;
+        previewUrl = '';
+        filename  = '';
+        selected  = false;
+        uploaded  = false;
+        error     = '';
+        urlValue  = '';
+        ready     = false;
+        value     = '';   // ← sync up to parent
+        inputType = 'file';
         const input = document.getElementById(`upload-${type}`);
         if (input) input.value = '';
         toast.success(`${label} removed`);
@@ -164,19 +187,32 @@
         error = '';
         if (urlValue.trim()) {
             filename = urlValue.trim();
+            value    = urlValue.trim();   // ← sync up to parent
             uploaded = true;
             selected = true;
-            ready    = true;    // URL needs no processing
+            ready    = true;
             dispatch('change', { mode: 'url', value: urlValue.trim() });
         } else {
-            filename = ''; uploaded = false; selected = false; ready = false;
+            filename = '';
+            value    = '';
+            uploaded = false;
+            selected = false;
+            ready    = false;
             dispatch('change', { mode: 'url', value: '' });
         }
     }
 
     function switchInputType(t) {
-        inputType = t; file = null; previewUrl = ''; filename = '';
-        selected = false; uploaded = false; error = ''; urlValue = ''; ready = false;
+        inputType = t;
+        file      = null;
+        previewUrl = '';
+        filename  = '';
+        selected  = false;
+        uploaded  = false;
+        error     = '';
+        urlValue  = '';
+        ready     = false;
+        value     = '';   // ← sync up to parent
         const input = document.getElementById(`upload-${type}`);
         if (input) input.value = '';
         dispatch('change', { mode: t, value: '' });
@@ -184,82 +220,125 @@
 </script>
 
 <div class="space-y-3">
-    <div class="inline-flex rounded-md border border-gray-300 overflow-hidden text-sm">
+    <!-- Toggle: File Upload / URL -->
+    <div class="inline-flex rounded-md border border-gray-600 overflow-hidden text-sm">
         <button type="button" on:click={() => switchInputType('file')}
             class="px-3 py-1.5 transition-colors duration-200
-                   {inputType === 'file' ? 'bg-gray-700 text-white' : 'bg-white text-gray-600 hover:bg-gray-100'}">
+                   {inputType === 'file'
+                       ? 'bg-gray-700 text-white'
+                       : 'bg-[#0d1017] text-gray-400 hover:bg-gray-800 hover:text-white'}">
             <Icon icon="mdi:file-upload-outline" class="inline w-4 h-4 mr-1" />File Upload
         </button>
         <button type="button" on:click={() => switchInputType('url')}
             class="px-3 py-1.5 transition-colors duration-200
-                   {inputType === 'url' ? 'bg-gray-700 text-white' : 'bg-white text-gray-600 hover:bg-gray-100'}">
+                   {inputType === 'url'
+                       ? 'bg-gray-700 text-white'
+                       : 'bg-[#0d1017] text-gray-400 hover:bg-gray-800 hover:text-white'}">
             <Icon icon="mdi:link-variant" class="inline w-4 h-4 mr-1" />URL
         </button>
     </div>
 
     {#if inputType === 'file'}
-        <input type="file" id="upload-{type}"
+        <!-- File input -->
+        <input
+            type="file"
+            id="upload-{type}"
             accept={isImage ? 'image/*' : 'video/*'}
-            on:change={handleFileChange} />
+            on:change={handleFileChange}
+            class="block text-sm text-gray-400
+                   file:mr-3 file:py-1.5 file:px-4
+                   file:rounded file:border-0
+                   file:text-sm file:font-semibold
+                   file:bg-gray-700 file:text-white
+                   hover:file:bg-gray-600 cursor-pointer"
+        />
 
+        <!-- Preview -->
         {#if previewUrl}
             {#if isImage}
-                <img src={previewUrl} alt="Preview"
-                    class="h-32 w-32 object-cover mt-2 rounded border"
-                    on:error={(e) => (e.target.src = '/skillsblock.png')} />
+                <img
+                    src={previewUrl}
+                    alt="Preview"
+                    class="h-32 w-32 object-cover mt-2 rounded border border-white/10"
+                    on:error={(e) => (e.target.src = '/skillsblock.png')}
+                />
             {:else}
                 <!-- svelte-ignore a11y-media-has-caption -->
-                <video src={previewUrl} controls class="mt-2 rounded max-h-48 w-auto"></video>
+                <video src={previewUrl} controls class="mt-2 rounded max-h-48 w-auto border border-white/10"></video>
             {/if}
         {/if}
 
+        <!-- Action buttons + status -->
         <div class="flex items-center gap-2 mt-2 flex-wrap">
-            <button type="button" on:click={uploadFile}
+            <button
+                type="button"
+                on:click={uploadFile}
                 disabled={!selected || uploaded}
-                class="px-5 py-1.5 bg-gray-700 border border-gray-700 text-white rounded
-                       hover:bg-white hover:text-gray-700 transition-all duration-300
-                       disabled:opacity-50 disabled:cursor-not-allowed">
+                class="px-5 py-1.5 bg-gray-700 border border-gray-600 text-white rounded
+                       hover:bg-gray-600 transition-all duration-200
+                       disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium">
                 Process {label}
             </button>
+
             {#if selected || uploaded}
-                <button type="button" on:click={removeFile}
-                    class="px-5 py-1.5 bg-red-600 border border-red-600 text-white rounded
-                           hover:bg-white hover:text-red-600 transition-all duration-300">
+                <button
+                    type="button"
+                    on:click={removeFile}
+                    class="px-5 py-1.5 bg-red-600/20 border border-red-500/40 text-red-400 rounded
+                           hover:bg-red-600/30 transition-all duration-200 text-sm font-medium">
                     Remove {label}
                 </button>
             {/if}
+
             {#if uploaded}
-                <span class="text-green-500 text-sm flex items-center">
-                    <Icon icon="mdi:check-circle" class="w-4 h-4 mr-1" />{label} processed successfully
+                <span class="text-emerald-400 text-sm flex items-center gap-1">
+                    <Icon icon="mdi:check-circle" class="w-4 h-4" />
+                    {label} processed successfully
                 </span>
             {:else if selected}
-                <!-- Nudge the user -->
                 <span class="text-amber-400 text-sm flex items-center gap-1">
                     <Icon icon="mdi:alert-circle-outline" class="w-4 h-4" />
                     Click "Process {label}" to continue
                 </span>
             {/if}
         </div>
-        {#if error}<p class="text-red-500 text-xs mt-1">{error}</p>{/if}
+
+        {#if error}
+            <p class="text-red-400 text-xs mt-1">{error}</p>
+        {/if}
 
     {:else}
-        <input type="url" bind:value={urlValue}
+        <!-- URL input — explicit dark bg + light text so it's always readable -->
+        <input
+            type="url"
+            bind:value={urlValue}
             placeholder={isImage
                 ? 'https://example.com/image.jpg'
                 : 'https://example.com/video.mp4 or YouTube / Vimeo URL'}
-            class="w-full p-2 border rounded {error ? 'border-red-500' : ''}"
-            on:input={handleUrlInput} />
+            class="w-full px-3 py-2 rounded border text-sm
+                   bg-[#161922] text-gray-100 placeholder-gray-500
+                   focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent
+                   {error ? 'border-red-500' : 'border-white/10'}"
+            on:input={handleUrlInput}
+        />
 
         {#if urlValue.trim()}
-            <span class="text-green-500 text-sm flex items-center mt-1">
-                <Icon icon="mdi:check-circle" class="w-4 h-4 mr-1" />URL ready — no processing needed
+            <span class="text-emerald-400 text-sm flex items-center gap-1 mt-1">
+                <Icon icon="mdi:check-circle" class="w-4 h-4" />
+                URL ready — no processing needed
             </span>
             {#if isImage}
-                <img src={urlValue.trim()} alt="URL preview"
-                    class="h-32 w-32 object-cover mt-2 rounded border"
-                    on:error={(e) => (e.target.src = '/skillsblock.png')} />
+                <img
+                    src={urlValue.trim()}
+                    alt="URL preview"
+                    class="h-32 w-32 object-cover mt-2 rounded border border-white/10"
+                    on:error={(e) => (e.target.src = '/skillsblock.png')}
+                />
             {/if}
         {/if}
-        {#if error}<p class="text-red-500 text-xs mt-1">{error}</p>{/if}
+
+        {#if error}
+            <p class="text-red-400 text-xs mt-1">{error}</p>
+        {/if}
     {/if}
 </div>

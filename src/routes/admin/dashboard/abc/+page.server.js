@@ -1,63 +1,21 @@
 import { fail, redirect } from '@sveltejs/kit';
 import {
-    courseInfo,updateCourseInfo
+    courseInfo, updateCourseInfo
 } from '$lib/server/mongoActions.js';
 import {
-    fetchCourseinfo} from '$lib/server/mongoLoads.js';
+    fetchCourseinfoadmin
+} from '$lib/server/mongoLoads.js';
 import { error } from '@sveltejs/kit';
 import { Section } from '$lib/server/models/Section.js';
 import { Courseinfo } from '$lib/server/models/Courseinfo.js';
 export async function load() {
-    const records = await fetchCourseinfo();
+    const records = await fetchCourseinfoadmin();
     return {
         courseInfo: JSON.parse(JSON.stringify(records)),
 
     };
 }
-// export async function load({ parent, url, fetch,async,locals }) {
 
-
-//     const page = url.searchParams.get("page");
-//     const search = url.searchParams.get("search");
-//     const filter = url.searchParams.get("filter");
-//     let CourseInfo = [];
-//     let submissions = [];
-//     try {
-//         CourseInfo = await fetchCourseinfo();
-//         return {
-//             records: CourseInfo?.records,
-//         };
-//     } catch (error) {
-//         console.error("Failed to load CourseInfo:", error);
-//         return {
-//             records: [],
-
-//         };
-//     }
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Actions.js
 export const actions = {
     createcourseinfo: async ({ request }) => {
         const formData = await request.formData();
@@ -79,43 +37,43 @@ export const actions = {
             });
         }
     },
-updatedcourseinfo: async ({ request }) => {
-    const formData = await request.formData();
-    const body = Object.fromEntries(formData);
-    const courseId = body.courseId;
+    updatedcourseinfo: async ({ request }) => {
+        const formData = await request.formData();
+        const body = Object.fromEntries(formData);
+        const courseId = body.courseId;
 
-    if (!courseId) {
-        return fail(400, { serverError: "Course ID is required for update." });
-    }
+        if (!courseId) {
+            return fail(400, { serverError: "Course ID is required for update." });
+        }
 
-    const keywords = (body.keywords ?? "").trim(); // ← just keep it as "abc,def,ghi"
+        const keywords = (body.keywords ?? "").trim(); // ← just keep it as "abc,def,ghi"
 
-    try {
-        const result = await Courseinfo.findOneAndUpdate(
-            { courseId },
-            {
-                $set: {
-                    title:       body.title,
-                    instructor:  body.instructor,
-                    level:       body.level,
-                    description: body.description,
-                    price:       Number(body.price),
-                    image:       body.image,
-                    keywords,
-                }
-            },
-            { new: true }
-        );
+        try {
+            const result = await Courseinfo.findOneAndUpdate(
+                { courseId },
+                {
+                    $set: {
+                        title: body.title,
+                        instructor: body.instructor,
+                        level: body.level,
+                        description: body.description,
+                        price: Number(body.price),
+                        image: body.image,
+                        keywords,
+                    }
+                },
+                { new: true }
+            );
 
-        if (!result) return fail(404, { serverError: "Course not found." });
-        return { success: true, message: "Course updated successfully." };
-    } catch (error) {
-        console.error("Error during course update:", error);
-        return fail(500, { serverError: error.message || "Failed to update course info" });
-    }
-},
-    
-  addSection: async ({ request }) => {
+            if (!result) return fail(404, { serverError: "Course not found." });
+            return { success: true, message: "Course updated successfully." };
+        } catch (error) {
+            console.error("Error during course update:", error);
+            return fail(500, { serverError: error.message || "Failed to update course info" });
+        }
+    },
+
+    addSection: async ({ request }) => {
         try {
             const data = await request.formData();
 
@@ -161,5 +119,5 @@ updatedcourseinfo: async ({ request }) => {
             return fail(500, { serverError: "Failed to save chapter." });
         }
     },
- 
+
 }

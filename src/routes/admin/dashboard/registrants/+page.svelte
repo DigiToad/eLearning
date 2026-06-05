@@ -1,48 +1,39 @@
 <script>
     import { enhance } from "$app/forms";
     import { goto } from "$app/navigation";
-
     export let data;
     export let form;
-
-    let { users, courses, pagination, search: initialSearch } = data;
-
-    /**
-     * selectedCourses: { [userId]: Set<courseId> }
-     * Tracks which courses are checked for each user (multi-select).
-     */
+    let { courses, search: initialSearch } = data;
+    $: users = data.users;
+    $: pagination = data.pagination;
+    $: courses = data.courses;
+    $: initialSearch = data.search;
     let selectedCourses = {};
-    let dropdownOpen = {}; // { [userId]: boolean }
+    let dropdownOpen = {};
     let loadingRow = {};
-    let searchQuery = initialSearch || "";
+    let searchQuery = data.search || "";
     let searchLoading = false;
-
     $: toast = form
         ? { msg: form.message, type: form.success ? "success" : "error" }
         : null;
     $: ({ page: currentPage, totalPages, total, pageSize } = pagination);
 
-    // Auto-dismiss toast after 4 s
     $: if (toast) {
         setTimeout(() => {
             toast = null;
         }, 3000);
     }
 
-    // ── Helpers ──────────────────────────────────────────────────────────────
-
     function getSelected(userId) {
         return selectedCourses[userId] ?? new Set();
     }
 
-    /** Returns array of already-granted courseIds for a user (handles String or [String] schema) */
     function getGranted(user) {
         const val = user.accessedcourse;
         if (!val) return [];
         return Array.isArray(val) ? val : [val];
     }
 
-    /** True if this course._id is already granted (compares via courseId or _id) */
     function isAlreadyGranted(user, courseMongoId) {
         const granted = getGranted(user);
         const course = courses.find((c) => c._id === courseMongoId);
@@ -52,7 +43,7 @@
     }
 
     function toggleCourse(userId, courseId, user) {
-        if (isAlreadyGranted(user, courseId)) return; // block re-selecting granted courses
+        if (isAlreadyGranted(user, courseId)) return;
         const set = new Set(getSelected(userId));
         set.has(courseId) ? set.delete(courseId) : set.add(courseId);
         selectedCourses = { ...selectedCourses, [userId]: set };
@@ -82,7 +73,6 @@
         dropdownOpen = {};
     }
 
-    // ── Form enhance: Grant (multi-course) ───────────────────────────────────
     function handleGrantEnhance(userId, userEmail) {
         return ({ formData, cancel }) => {
             const set = getSelected(userId);
@@ -120,7 +110,6 @@
         };
     }
 
-    // ── Form enhance: Revoke ─────────────────────────────────────────────────
     function handleRevokeEnhance(userId) {
         return ({ formData, cancel }) => {
             const set = getSelected(userId);
@@ -157,7 +146,6 @@
         };
     }
 
-    // ── Navigation ───────────────────────────────────────────────────────────
     async function handleSearch(e) {
         e.preventDefault();
         searchLoading = true;
@@ -198,10 +186,8 @@
     <title>Registrants | Admin</title>
 </svelte:head>
 
-<!-- Click-outside to close dropdowns -->
 <svelte:window on:click={closeAll} />
 
-<!-- Toast -->
 {#if toast}
     <div
         class="fixed top-4 right-4 z-50 px-4 py-3 rounded-lg text-sm font-semibold max-w-sm shadow-xl
@@ -232,7 +218,7 @@
     </div>
 
     <div class="max-w-screen-xl mx-auto px-6 py-6">
-        <!-- Search Bar -->
+        <!-- Search -->
         <form on:submit={handleSearch} class="flex gap-2 mb-6">
             <div class="relative flex-1 max-w-md">
                 <svg
@@ -254,15 +240,13 @@
                     placeholder="Search by email or institution…"
                     class="w-full bg-slate-900 border border-slate-700 text-slate-200 text-sm rounded-lg
                            pl-9 pr-4 py-2.5 placeholder-slate-600
-                           focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/30
-                           transition-colors"
+                           focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/30 transition-colors"
                 />
             </div>
             <button
                 type="submit"
                 disabled={searchLoading}
-                class="bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-slate-950 font-semibold
-                       text-sm px-4 py-2.5 rounded-lg transition-colors flex items-center gap-2"
+                class="bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-slate-950 font-semibold text-sm px-4 py-2.5 rounded-lg transition-colors flex items-center gap-2"
             >
                 {#if searchLoading}
                     <svg
@@ -291,8 +275,7 @@
                 <button
                     type="button"
                     on:click={clearSearch}
-                    class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium
-                           px-4 py-2.5 rounded-lg transition-colors border border-slate-700"
+                    class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium px-4 py-2.5 rounded-lg transition-colors border border-slate-700"
                 >
                     Clear
                 </button>
@@ -336,7 +319,11 @@
                             >
                             <th
                                 class="text-left px-4 py-3 text-xs font-mono uppercase tracking-widest text-slate-500"
-                                >Accessed Course</th
+                                >Accessed Courses</th
+                            >
+                            <th
+                                class="text-left px-4 py-3 text-xs font-mono uppercase tracking-widest text-slate-500"
+                                >Interested Courses</th
                             >
                             <th
                                 class="text-left px-4 py-3 text-xs font-mono uppercase tracking-widest text-slate-500"
@@ -352,7 +339,7 @@
                         {#if users.length === 0}
                             <tr>
                                 <td
-                                    colspan="8"
+                                    colspan="9"
                                     class="text-center py-16 text-slate-600 font-mono text-sm"
                                 >
                                     {initialSearch
@@ -370,8 +357,7 @@
                                     isGrantLoading || isRevokeLoading}
 
                                 <tr
-                                    class="border-b border-slate-800/60 hover:bg-slate-900/40 transition-colors
-                                           {anyLoading
+                                    class="border-b border-slate-800/60 hover:bg-slate-900/40 transition-colors {anyLoading
                                         ? 'opacity-50 pointer-events-none'
                                         : ''}"
                                 >
@@ -405,21 +391,16 @@
                                         >{user.institution || "—"}</td
                                     >
 
-                                    <!-- Currently Accessed Courses (array) -->
+                                    <!-- Accessed Courses -->
                                     <td class="px-4 py-3">
                                         {#if getGranted(user).length > 0}
                                             <div class="flex flex-col gap-1.5">
                                                 {#each getGranted(user) as gid}
                                                     <div
-                                                        class="inline-flex items-center gap-1 w-fit
-                                                                group rounded-md overflow-hidden
-                                                                border border-emerald-900"
+                                                        class="inline-flex items-center gap-1 w-fit group rounded-md overflow-hidden border border-emerald-900"
                                                     >
-                                                        <!-- Course title -->
                                                         <span
-                                                            class="inline-flex items-center gap-1 pl-2 pr-1.5 py-0.5
-                                                                     text-xs font-mono font-semibold
-                                                                     bg-emerald-950 text-emerald-400"
+                                                            class="inline-flex items-center gap-1 pl-2 pr-1.5 py-0.5 text-xs font-mono font-semibold bg-emerald-950 text-emerald-400"
                                                         >
                                                             <svg
                                                                 class="w-2.5 h-2.5 shrink-0"
@@ -441,7 +422,7 @@
                                                                     String(gid),
                                                             )?.title ?? gid}
                                                         </span>
-                                                        <!-- Per-course revoke button -->
+                                                        <!-- Per-course revoke -->
                                                         <form
                                                             method="POST"
                                                             action="?/revokeAccess"
@@ -502,10 +483,8 @@
                                                                 type="submit"
                                                                 title="Revoke this course"
                                                                 class="flex items-center justify-center px-1.5 py-0.5 h-full
-                                                                       bg-red-950/60 hover:bg-red-900
-                                                                       text-red-500 hover:text-red-300
-                                                                       border-l border-emerald-900
-                                                                       transition-colors cursor-pointer"
+                                                                       bg-red-950/60 hover:bg-red-900 text-red-500 hover:text-red-300
+                                                                       border-l border-emerald-900 transition-colors cursor-pointer"
                                                             >
                                                                 {#if loadingRow[`revoke_single_${user.userId}_${gid}`]}
                                                                     <svg
@@ -528,7 +507,6 @@
                                                                         />
                                                                     </svg>
                                                                 {:else}
-                                                                    <!-- × icon -->
                                                                     <svg
                                                                         class="w-2.5 h-2.5"
                                                                         fill="none"
@@ -552,6 +530,161 @@
                                             <span
                                                 class="text-xs font-mono text-slate-600"
                                                 >No access</span
+                                            >
+                                        {/if}
+                                    </td>
+
+                                    <!-- Interested Courses -->
+                                    <td class="px-4 py-3">
+                                        {#if user.interestedcourse?.length > 0}
+                                            <div class="flex flex-col gap-1.5">
+                                                {#each user.interestedcourse as ic}
+                                                    <div
+                                                        class="inline-flex items-center gap-1 w-fit rounded-md overflow-hidden border border-violet-900"
+                                                    >
+                                                        <!-- Course name + price -->
+                                                        <span
+                                                            class="inline-flex items-center gap-1 pl-2 pr-1.5 py-0.5 text-xs font-mono font-semibold bg-violet-950 text-violet-400"
+                                                        >
+                                                            <!-- <svg class="w-2.5 h-2.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                                                            </svg> -->
+                                                            {ic.courseName}
+                                                            {#if ic.coursePrice}
+                                                                <span
+                                                                    class="text-violet-300 ml-1"
+                                                                    >₹{ic.coursePrice}</span
+                                                                >
+                                                            {/if}
+                                                        </span>
+
+                                                        <!-- Grant access from interest (✓) -->
+                                                        <form
+                                                            method="POST"
+                                                            action="?/grantFromInterest"
+                                                            use:enhance={() => {
+                                                                loadingRow = {
+                                                                    ...loadingRow,
+                                                                    [`interest_${user.userId}_${ic.courseId}`]: true,
+                                                                };
+                                                                return async ({
+                                                                    update,
+                                                                }) => {
+                                                                    await update(
+                                                                        {
+                                                                            reset: false,
+                                                                        },
+                                                                    );
+                                                                    loadingRow =
+                                                                        {
+                                                                            ...loadingRow,
+                                                                            [`interest_${user.userId}_${ic.courseId}`]: false,
+                                                                        };
+                                                                };
+                                                            }}
+                                                        >
+                                                            <input
+                                                                type="hidden"
+                                                                name="email"
+                                                                value={user.email}
+                                                            />
+                                                            <input
+                                                                type="hidden"
+                                                                name="userId"
+                                                                value={user.userId}
+                                                            />
+                                                            <input
+                                                                type="hidden"
+                                                                name="courseId"
+                                                                value={ic.courseId}
+                                                            />
+                                                            <input
+                                                                type="hidden"
+                                                                name="courseName"
+                                                                value={ic.courseName}
+                                                            />
+                                                            <button
+                                                                type="submit"
+                                                                title="Grant access & remove from interested"
+                                                                class="flex items-center justify-center px-1.5 py-0.5 h-full
+                                                                       bg-emerald-950/60 hover:bg-emerald-900
+                                                                       text-emerald-500 hover:text-emerald-300
+                                                                       border-l border-violet-900 transition-colors cursor-pointer"
+                                                            >
+                                                                {#if loadingRow[`interest_${user.userId}_${ic.courseId}`]}
+                                                                    <svg
+                                                                        class="w-2.5 h-2.5 animate-spin"
+                                                                        fill="none"
+                                                                        viewBox="0 0 24 24"
+                                                                    >
+                                                                        <circle
+                                                                            class="opacity-25"
+                                                                            cx="12"
+                                                                            cy="12"
+                                                                            r="10"
+                                                                            stroke="currentColor"
+                                                                            stroke-width="4"
+                                                                        />
+                                                                        <path
+                                                                            class="opacity-75"
+                                                                            fill="currentColor"
+                                                                            d="M4 12a8 8 0 018-8v8H4z"
+                                                                        />
+                                                                    </svg>
+                                                                {:else}
+                                                                    <svg
+                                                                        class="w-2.5 h-2.5"
+                                                                        fill="none"
+                                                                        stroke="currentColor"
+                                                                        viewBox="0 0 24 24"
+                                                                    >
+                                                                        <path
+                                                                            stroke-linecap="round"
+                                                                            stroke-linejoin="round"
+                                                                            stroke-width="2.5"
+                                                                            d="M5 13l4 4L19 7"
+                                                                        />
+                                                                    </svg>
+                                                                {/if}
+                                                            </button>
+                                                        </form>
+
+                                                        <!-- Dismiss interest (×) -->
+                                                        <!-- <form method="POST" action="?/dismissInterest"
+                                                            use:enhance={() => {
+                                                                loadingRow = { ...loadingRow, [`dismiss_${user.userId}_${ic.courseId}`]: true };
+                                                                return async ({ update }) => {
+                                                                    await update({ reset: false });
+                                                                    loadingRow = { ...loadingRow, [`dismiss_${user.userId}_${ic.courseId}`]: false };
+                                                                };
+                                                            }}
+                                                        >
+                                                            <input type="hidden" name="userId"   value={user.userId}/>
+                                                            <input type="hidden" name="courseId" value={ic.courseId}/>
+                                                            <button type="submit" title="Dismiss interest"
+                                                                class="flex items-center justify-center px-1.5 py-0.5 h-full
+                                                                       bg-red-950/60 hover:bg-red-900
+                                                                       text-red-500 hover:text-red-300
+                                                                       border-l border-violet-900 transition-colors cursor-pointer">
+                                                                {#if loadingRow[`dismiss_${user.userId}_${ic.courseId}`]}
+                                                                    <svg class="w-2.5 h-2.5 animate-spin" fill="none" viewBox="0 0 24 24">
+                                                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                                                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
+                                                                    </svg>
+                                                                {:else}
+                                                                    <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+                                                                    </svg>
+                                                                {/if}
+                                                            </button>
+                                                        </form> -->
+                                                    </div>
+                                                {/each}
+                                            </div>
+                                        {:else}
+                                            <span
+                                                class="text-xs font-mono text-slate-600"
+                                                >—</span
                                             >
                                         {/if}
                                     </td>
@@ -587,8 +720,7 @@
                                                     {selectedLabel(user.userId)}
                                                 </span>
                                                 <svg
-                                                    class="w-3.5 h-3.5 shrink-0 text-slate-500 transition-transform
-                                                            {dropdownOpen[
+                                                    class="w-3.5 h-3.5 shrink-0 text-slate-500 transition-transform {dropdownOpen[
                                                         user.userId
                                                     ]
                                                         ? 'rotate-180'
@@ -609,8 +741,7 @@
                                             {#if dropdownOpen[user.userId]}
                                                 <div
                                                     class="absolute z-40 top-full mt-1 left-0 min-w-[240px]
-                                                             bg-slate-900 border border-slate-700 rounded-xl shadow-2xl
-                                                             overflow-hidden"
+                                                             bg-slate-900 border border-slate-700 rounded-xl shadow-2xl overflow-hidden"
                                                 >
                                                     <!-- Select All / Clear -->
                                                     <div
@@ -644,9 +775,8 @@
                                                                     };
                                                             }}
                                                             class="text-xs text-emerald-400 hover:text-emerald-300 font-medium"
+                                                            >All</button
                                                         >
-                                                            All
-                                                        </button>
                                                         <span
                                                             class="text-xs text-slate-600 font-mono"
                                                         >
@@ -666,11 +796,9 @@
                                                                     };
                                                             }}
                                                             class="text-xs text-slate-500 hover:text-slate-300 font-medium"
+                                                            >Clear</button
                                                         >
-                                                            Clear
-                                                        </button>
                                                     </div>
-
                                                     <!-- Course list -->
                                                     <div
                                                         class="max-h-48 overflow-y-auto"
@@ -691,8 +819,7 @@
                                                                 class="flex items-center gap-2.5 px-3 py-2
                                                                           {granted
                                                                     ? 'cursor-not-allowed opacity-60'
-                                                                    : 'cursor-pointer hover:bg-slate-800/60'}
-                                                                          transition-colors"
+                                                                    : 'cursor-pointer hover:bg-slate-800/60'} transition-colors"
                                                             >
                                                                 <input
                                                                     type="checkbox"
@@ -705,10 +832,9 @@
                                                                             course._id,
                                                                             user,
                                                                         )}
-                                                                    class="w-3.5 h-3.5 cursor-pointer
-                                                                           {granted
+                                                                    class="w-3.5 h-3.5 {granted
                                                                         ? 'accent-slate-500 cursor-not-allowed'
-                                                                        : 'accent-emerald-500'}"
+                                                                        : 'accent-emerald-500 cursor-pointer'}"
                                                                 />
                                                                 <span
                                                                     class="text-xs flex items-center gap-1.5
@@ -721,11 +847,9 @@
                                                                     {course.title}
                                                                     {#if granted}
                                                                         <span
-                                                                            class="text-[10px] font-mono px-1.5 py-0.5 rounded
-                                                                                     bg-slate-800 text-slate-500 border border-slate-700"
+                                                                            class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-800 text-slate-500 border border-slate-700"
+                                                                            >granted</span
                                                                         >
-                                                                            granted
-                                                                        </span>
                                                                     {/if}
                                                                 </span>
                                                             </label>
@@ -736,10 +860,9 @@
                                         </div>
                                     </td>
 
-                                    <!-- Actions: Grant + Revoke -->
+                                    <!-- Actions: Grant -->
                                     <td class="px-4 py-3">
                                         <div class="flex items-center gap-2">
-                                            <!-- Grant Access -->
                                             <form
                                                 method="POST"
                                                 action="?/grantAccess"
@@ -806,42 +929,6 @@
                                                     {/if}
                                                 </button>
                                             </form>
-
-                                            <!-- Revoke Access -->
-                                            <form
-                                                method="POST"
-                                                action="?/revokeAccess"
-                                                use:enhance={handleRevokeEnhance(
-                                                    user.userId,
-                                                )}
-                                            >
-                                                <input
-                                                    type="hidden"
-                                                    name="email"
-                                                    value={user.email}
-                                                />
-                                                <!-- <button
-                                                    type="submit"
-                                                    disabled={!(selectedCourses[user.userId]?.size > 0) || anyLoading}
-                                                    title={!(selectedCourses[user.userId]?.size > 0) ? 'Select courses to revoke' : 'Revoke access to selected courses'}
-                                                    class="inline-flex items-center justify-center gap-1.5 min-w-[90px]
-                                                           bg-transparent hover:bg-red-500/10 border border-red-700
-                                                           disabled:opacity-30 disabled:cursor-not-allowed
-                                                           text-red-400 hover:text-red-300 font-bold text-xs rounded-lg
-                                                           px-4 py-2 transition-all hover:-translate-y-px active:translate-y-0">
-                                                    {#if isRevokeLoading}
-                                                        <svg class="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
-                                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
-                                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
-                                                        </svg>
-                                                    {:else}
-                                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
-                                                        </svg>
-                                                        Revoke
-                                                    {/if}
-                                                </button> -->
-                                            </form>
                                         </div>
                                     </td>
                                 </tr>
@@ -872,8 +959,7 @@
                     {#if pageRange(currentPage, totalPages)[0] > 1}
                         <button
                             on:click={() => goToPage(1)}
-                            class="px-3 py-1.5 rounded-lg text-xs font-mono border border-slate-700
-                                   bg-slate-900 text-slate-400 hover:bg-slate-800 transition-colors"
+                            class="px-3 py-1.5 rounded-lg text-xs font-mono border border-slate-700 bg-slate-900 text-slate-400 hover:bg-slate-800 transition-colors"
                             >1</button
                         >
                         {#if pageRange(currentPage, totalPages)[0] > 2}
@@ -888,8 +974,9 @@
                                    {p === currentPage
                                 ? 'bg-emerald-500 border-emerald-500 text-slate-950 font-bold'
                                 : 'border-slate-700 bg-slate-900 text-slate-400 hover:bg-slate-800 hover:text-slate-200'}"
-                            >{p}</button
                         >
+                            {p}
+                        </button>
                     {/each}
 
                     {#if pageRange(currentPage, totalPages).at(-1) < totalPages}
@@ -898,10 +985,10 @@
                         {/if}
                         <button
                             on:click={() => goToPage(totalPages)}
-                            class="px-3 py-1.5 rounded-lg text-xs font-mono border border-slate-700
-                                   bg-slate-900 text-slate-400 hover:bg-slate-800 transition-colors"
-                            >{totalPages}</button
+                            class="px-3 py-1.5 rounded-lg text-xs font-mono border border-slate-700 bg-slate-900 text-slate-400 hover:bg-slate-800 transition-colors"
                         >
+                            {totalPages}
+                        </button>
                     {/if}
 
                     <button

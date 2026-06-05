@@ -204,7 +204,7 @@
                                                hover:bg-zinc-600 text-white
                                                text-sm font-semibold transition-all"
                                     >
-                                        ✏️ Edit Info
+                                         Edit Info
                                     </button>
 
                                     <a

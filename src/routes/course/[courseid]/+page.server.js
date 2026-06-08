@@ -5,12 +5,8 @@ import { Section } from '$lib/server/models/Section.js';
 import { SubSection } from '$lib/server/models/SubSection.js';
 import { UserProgress } from '$lib/server/models/UserProgress.js';
 import Profile from '$lib/server/models/Profile.js';
-import { emailTemplates } from '$lib/email/templates.js';
-import { sendNotificationEmail, sendEmailToUser } from '$lib/server/emailNotification.js';
-import { contactUsstore } from "$lib/server/mongoActions.js";
-import { APP_URL } from '$env/static/private';
-import { PUBLIC_WEBSITE_NAME } from '$env/static/public';
-const Digitoad = PUBLIC_WEBSITE_NAME;
+
+
 export async function load({ params, locals }) {
     const courseId = params.courseid;
     if (!courseId) throw error(400, 'Missing course ID');

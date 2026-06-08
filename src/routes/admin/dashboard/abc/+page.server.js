@@ -19,14 +19,8 @@ export async function load() {
 export const actions = {
     createcourseinfo: async ({ request }) => {
         const formData = await request.formData();
-
-        console.log(formData, "FormDataaaaaaaaaaa");
-
-
         const body = Object.fromEntries(formData);
-        // console.log('newsbody-->',body)
         try {
-            console.log('NeswsAdded Data-->>', body);
             const result = await courseInfo(body);
             return { status: 200, message: result.message };
         } catch (error) {
@@ -41,13 +35,10 @@ export const actions = {
         const formData = await request.formData();
         const body = Object.fromEntries(formData);
         const courseId = body.courseId;
-
         if (!courseId) {
             return fail(400, { serverError: "Course ID is required for update." });
         }
-
-        const keywords = (body.keywords ?? "").trim(); // ← just keep it as "abc,def,ghi"
-
+        const keywords = (body.keywords ?? "").trim(); 
         try {
             const result = await Courseinfo.findOneAndUpdate(
                 { courseId },
@@ -76,10 +67,8 @@ export const actions = {
     addSection: async ({ request }) => {
         try {
             const data = await request.formData();
-
             const courseId = data.get("courseId")?.toString().trim();
             const title = data.get("title")?.toString().trim();
-
             if (!courseId) {
                 return fail(400, { serverError: "Course ID is required." });
             }
@@ -88,13 +77,11 @@ export const actions = {
                 return fail(422, { serverError: "Chapter title must be between 3 and 100 characters." });
             }
 
-            // Find existing Section doc for this course, or create a new one
+          
             const existing = await Section.findOne({ courseId });
 
             if (existing) {
-                // Push the new section into the existing document
                 const nextOrder = (existing.sections?.length ?? 0) + 1;
-
                 await Section.findByIdAndUpdate(
                     existing._id,
                     {
@@ -105,7 +92,6 @@ export const actions = {
                     { new: true }
                 );
             } else {
-                // First section for this course
                 await Section.create({
                     courseId,
                     sections: [{ title, order: 1 }]

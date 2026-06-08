@@ -19,12 +19,7 @@ export async function load() {
 export const actions = {
     createcourseinfo: async ({ request }) => {
         const formData = await request.formData();
-
-        console.log(formData, "FormDataaaaaaaaaaa");
-
-
         const body = Object.fromEntries(formData);
-        // console.log('newsbody-->',body)
         try {
             console.log('NeswsAdded Data-->>', body);
             const result = await courseInfo(body);

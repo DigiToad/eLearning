@@ -2,14 +2,9 @@
 <script>
   import { enhance } from '$app/forms';
   import { goto, invalidateAll } from '$app/navigation';
-
-  // ── Props ──────────────────────────────────────────────────────────────────
-  export let data;   // { courses, totalCount, drafts, activeDraft, currentPage, search }
-  // console.log(data,"dataaaaaaaaaaaaaaaa");
+  export let data;   
   
-  export let form;   // form action result
-
-  // ── Reactive derived state ─────────────────────────────────────────────────
+  export let form;   
   $: courses       = data?.courses      ?? [];
   $: drafts        = data?.drafts       ?? [];
   $: activeDraft   = data?.activeDraft  ?? null;
@@ -19,16 +14,11 @@
   $: uploadedCount = activeDraft?.uploadedCount ?? 0;
   $: isComplete    = modules.length > 0
       && modules.every(m => m.lessons.length > 0 && m.assessment != null);
-
-  // ── Panel state ────────────────────────────────────────────────────────────
   let panel = 'list';
   $: if (activeDraft && panel === 'list') panel = 'edit';
 
   let openModule = 0;
-
-  // ── Toast notification ─────────────────────────────────────────────────────
   let notify = null;
-
   $: if (form?.success) {
     notify = { type: 'success', msg: successMsg(form) };
     setTimeout(() => (notify = null), 4000);
@@ -44,7 +34,6 @@
     return '✓ Done!';
   }
 
-  // ── Helpers ────────────────────────────────────────────────────────────────
   function progressPct() {
     if (!totalVideos) return 0;
     return Math.min(100, Math.round((uploadedCount / totalVideos) * 100));
@@ -64,7 +53,6 @@
     empty:    'bg-zinc-600'
   };
 
-  // ── enhance callback — syncs activeDraft after mutations ──────────────────
   function handleResult() {
     return async ({ result, update }) => {
       await update({ reset: false });
@@ -78,10 +66,7 @@
 
 
 
-<!-- ═══ ROOT ════════════════════════════════════════════════════════════════ -->
 <div class="min-h-screen bg-[#0d0f14] text-zinc-100" style="font-family:'DM Sans',sans-serif">
-
-  <!-- ── Sidebar ──────────────────────────────────────────────────────────── -->
   <aside class="fixed top-0 left-0 h-screen w-56 bg-[#13161d] border-r border-white/5 flex flex-col z-30">
     <div class="px-5 py-5 border-b border-white/5">
       <span class="text-xs font-bold text-violet-400 tracking-widest uppercase"

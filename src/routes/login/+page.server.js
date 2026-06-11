@@ -6,7 +6,7 @@ import { authErrorMessages } from "$lib/server/lucia.js";
 // import { sendEmailOTP, verifyOtp } from "$lib/server/emailOtpHandler.js";
 export const actions = {
   login: async ({ request, cookies }) => {
-    const redirectUrls = cookies.get("redirectUrl") || "/admin/dashboard";
+    const redirectUrls = cookies.get("redirectUrl") || "/dashboard";
     const formData = Object.fromEntries(await request.formData());
 
     const input = formData.emailOrUsername?.trim();

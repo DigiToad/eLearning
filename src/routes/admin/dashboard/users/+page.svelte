@@ -4,7 +4,7 @@
 	import Icon from '@iconify/svelte';
 
 	export let data;
-	console.log(data,"dataaa");
+	// console.log(data,"dataaa");
 	
 	
 	// Extract user data and current user info
@@ -18,8 +18,8 @@
 
 	// Conditionally add 'Delete' header only for admin
 	$: headers = isAdmin 
-		? ['User Name', 'Email', 'Date', 'Actions',  'Delete']
-		: ['User Name', 'Email', 'Date', 'Actions'];
+		? ['User Name', 'Email','Phone', 'Institution','Date', 'Actions',  'Delete']
+		: ['User Name', 'Email','Phone','Institution', 'Date', 'Actions'];
 		
 	let searchQuery = $page.url.searchParams.get('search') || '';
 	let selectedStatus = $page.url.searchParams.get('filter') || 'unread';
@@ -126,15 +126,17 @@
 				<thead>
 					<tr class="text-sm font-medium bg-gray-100 sticky top-0 whitespace-nowrap">
 						{#each headers as header}
-							<th class="px-4 py-2">{header}</th>
+							<th class="px-4 py-2 gap-4 ">{header}</th>
 						{/each}
 					</tr>
 				</thead>
-				<tbody class="text-xs">
+				<tbody class="text-xs ">
 					{#each datafetch as item}
-						<tr class="border-t-1 font-medium whitespace-nowrap">
-							<td class="px-4 py-2">{item.name || item.username || '-'}</td>
+						<tr class="border-t-1  font-medium whitespace-nowrap">
+							<td class="px-4 py-2 gap-4">{item.firstName + " " + item.lastName || item.username || '-'}</td>
 							<td class="px-4 py-2">{item.email}</td>
+								<td class="px-4 py-2">{item.phone}</td>
+								<td class="px-4 py-2">{item.institution || '-'}</td>
 							
 							<td class="px-4 py-2">
 								{new Date(item.createdAt).toLocaleDateString('en-GB')}
@@ -240,8 +242,11 @@
 
 			<!-- Data Content -->
 			<div class="grid grid-cols-2 gap-4 text-sm">
-				<div><strong>Name:</strong> {selectedItem.name || selectedItem.username || '-'}</div>
+				<div><strong>Name:</strong> {selectedItem.firstName + " " + selectedItem.lastName  || selectedItem.username || '-'}</div>
 				<div><strong>Email:</strong> {selectedItem.email}</div>
+				<div><strong>Phone:</strong> {selectedItem.phone}</div>
+				<!-- <div><strong>Email:</strong> {selectedItem.email}</div> -->
+					<div><strong>Institution:</strong> {selectedItem.institution}</div>
 			
 				<!-- <div><strong>Status:</strong> {selectedItem.status || '-'}</div> -->
 				<div>

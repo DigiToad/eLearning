@@ -10,37 +10,25 @@ const chemiDashProfileSchema = new mongoose.Schema(
 
     firstName: {
       type: String,
-      required: false,
     },
     lastName: {
       type: String,
-      required: false,
     },
-
-
     email: {
       type: String,
-      required: false,
       unique: true,
     },
     phone: {
       type: String,
-      required: false,
-      unique: true,
     },
     institution: {
       type: String,
-      required: false,
-      unique: true,
     },
     branch: {
       type: String,
-      required: false,
-      unique: true,
     },
     userId: {
       type: String,
-      required: true,
     },
     resetPasswordToken: { type: String },
     resetTokenExpiry: { type: Date },

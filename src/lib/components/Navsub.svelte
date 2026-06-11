@@ -263,11 +263,11 @@
                     <button
                         on:click={() => navigateTo("/login")}
                         class="w-full text-left py-2 border-b border-blue-700"
-                        >Sign In</button
+                        >Login</button
                     >
                     <button
                         on:click={() => navigateTo("/register")}
-                        class="w-full text-left py-2">Sign Up</button
+                        class="w-full text-left py-2">Register</button
                     >
                 </div>
             {:else}

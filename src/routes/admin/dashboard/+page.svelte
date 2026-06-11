@@ -4,13 +4,13 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import Sidebar from '$lib/components/Sidebar.svelte';
-	import Signup from '$lib/components/signup.svelte';
+	import Signup from '$lib/components/Adminregister.svelte';
 
 	export let data;
 	let count_values = data?.stats || 0;
-	console.log(count_values, 'count_values');
+	// console.log(count_values, 'count_values');
 
-	$: console.log('Dashboard-->', data);
+	// $: console.log('Dashboard-->', data);
 
 	let user = data?.authedUser || { firstname: '', phone: '', email: '' };
 
@@ -23,17 +23,17 @@
 	let formSuccess = '';
 	let selectedCountryEdit = '';
 
-	$: {
-		if (data?.customerQuotes?.quotes && Array.isArray(data.customerQuotes.quotes)) {
-			quotes = data.customerQuotes.quotes;
-		} else {
-			quotes = [];
-		}
-	}
+	// $: {
+	// 	if (data?.customerQuotes?.quotes && Array.isArray(data.customerQuotes.quotes)) {
+	// 		quotes = data.customerQuotes.quotes;
+	// 	} else {
+	// 		quotes = [];
+	// 	}
+	// }
 
-	$: recentQuotes = quotes
-		.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
-		.slice(0, 2);
+	// $: recentQuotes = quotes
+	// 	.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
+	// 	.slice(0, 2);
 
 	onMount(() => {
 		isLoading = false;

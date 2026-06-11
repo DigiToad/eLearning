@@ -183,6 +183,7 @@
 
             <!-- Video Upload -->
             <div>
+                <!-- svelte-ignore a11y-label-has-associated-control -->
                 <label class="block text-[0.68rem] font-bold tracking-[0.15em] uppercase
                               text-zinc-400 mb-2">
                     Video <span class="text-rose-400">*</span>

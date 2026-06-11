@@ -1,37 +1,10 @@
-// import Contactus from '$lib/server/models/Contact.js';
-// import Events from '$lib/server/models/Events.js';
-// import Products from '$lib/server/models/Component.js'
-// import Partners from '$lib/server/models/Partners';
+
 import User from '$lib/server/models/User.js'
-// import Oems from '$lib/server/models/Oem.js'
-// import Productdemo from '$lib/server/models/Productdemo.js'
-// import Quote from '$lib/server/models/Quoteform.js'
-// import Collab from '$lib/server/models/Collaborator.js';
-// import Category from '$lib/server/models/Category.js'
-// import WebinarFeedback from '$lib/server/models/Feedback.js';
 import { error } from '@sveltejs/kit';
 import { Course, CourseDraft } from '$lib/server/models/Courses.js';
 import { Courseinfo } from '$lib/server/models/Courseinfo.js';
 import { Section } from "$lib/server/models/Section.js";
-// export async function fetchCourseinfo() {
-//   try {
-//     const records = await Courseinfo.find().lean();
-
-//     return { records };
-//   } catch (error) {
-//     console.error("Failed to load CourseInfo:", error);
-
-//     return {
-//       records: [],
-//       totalCount: 0
-//     };
-//   }
-// }
-// course.service.js
-
-// import { Courseinfo } from "$lib/server/models/Courseinfo.js";
-// import { Section } from "$lib/server/models/Section.js";
-
+import Profile from '$lib/server/models/Profile.js';
 export async function fetchCourseinfo() {
   try {
 
@@ -106,43 +79,11 @@ export async function fetchCourses(currentPage, search, filter) {
   return { records, totalCount };
 }
 
-// export const getAllProducts = async () => {
-//   try {
-//     const allBlogsRaw = await Products.find();
-//     const allBlogs = allBlogsRaw.map(blog => ({
-//       id: blog._id.toString(),
-//       category: blog.category,
-//       title: blog.title,
-//       subtitle: blog.subtitle,
-//       description: blog.description,
-//       overview: blog.overview,
-//       features: blog.features,
-//       applications: blog.applications,
-//       image: blog.image,
-//       keywords :blog.keywords,
-//       subcategory : blog.subcategory,
-//     }));
-
-//     const totalCount = allBlogs.length;
-
-//     return { 
-//       allBlogs, 
-//       totalCount 
-//     };
-//   } catch (error) {
-//     console.error("Error fetching Products:", error);
-//     return {
-//       message: "Failed to fetch Products",
-//       allBlogs: [],
-//       totalCount: 0
-//     };
-//   }
-// };
 
 
 export const getAllProducts = async () => {
   try {
-    // Fetch products
+
     const allBlogsRaw = await Products.find();
 
     const allBlogs = allBlogsRaw.map(blog => ({
@@ -200,9 +141,7 @@ export const getAllCategories = async () => {
   }
 };
 export async function getprodustsdata(currentPage, search, filter) {
-  //   console.log("currentPage", currentPage);
-  //    console.log("search in server", search);
-  //    console.log("filter in server", filter);
+
   let page = currentPage || 1
   let pageSize = 12
   let dataFilter = {}
@@ -224,13 +163,11 @@ export async function getNewsData(currentPage = 1) {
   const pageSize = 12;
   const now = new Date();
 
-  // Build a filter that accounts for endTime stored separately
-  // We fetch all and split in JS since endTime is a separate field
+
   const allRecords = JSON.parse(
     JSON.stringify(await Events.find({}).sort({ startDate: -1 }))
   );
 
-  // Split upcoming vs past using both endDate + endTime
   const getEndDateTime = (event) => {
     const end = new Date(event.endDate);
     if (event.endTime) {
@@ -259,52 +196,7 @@ export async function getNewsData(currentPage = 1) {
     pastTotalCount
   };
 }
-// export async function getNewsData(currentPage = 1) {
-//   const pageSize = 12;
-//   const now = new Date();
 
-//   // Fetch ALL upcoming events (no pagination)
-//   const upcomingRecords = JSON.parse(
-//     JSON.stringify(
-//       await Events.find({ endDate: { $gte: now } }).sort({ startDate: 1 })
-//     )
-//   );
-
-//   // Fetch ONLY past events with pagination
-//   const pastRecords = JSON.parse(
-//     JSON.stringify(
-//       await Events.find({ endDate: { $lt: now } })
-//         .sort({ startDate: -1 })
-//         .skip((currentPage - 1) * pageSize)
-//         .limit(pageSize)
-//     )
-//   );
-
-//   const pastTotalCount = await Events.countDocuments({ endDate: { $lt: now } });
-
-//   return { upcomingRecords, pastRecords, pastTotalCount };
-// }
-// export async function getNewsData(currentPage, search, filter) {
-//   //   console.log("currentPage", currentPage);
-//   //    console.log("search in server", search);
-//   //    console.log("filter in server", filter);
-//   let page = currentPage || 1
-//   let pageSize = 12
-//   let dataFilter = {}
-//   if (search) {
-//     dataFilter.$or = [
-//       { title: { $regex: search, $options: "i" } },
-//       { Keyword: { $regex: search, $options: "i" } }
-//     ]
-//   } else if (filter && filter !== "all") {
-//     dataFilter.status = filter
-//   }
-
-//   const records = JSON.parse(JSON.stringify(await Events.find(dataFilter).sort({ createdAt: -1 }).skip((page - 1) * pageSize).limit(pageSize)));
-//   const totalCount = JSON.parse(JSON.stringify(await Events.countDocuments(dataFilter)))
-//   //   console.log("records",records);
-//   return { records, totalCount };
-// }
 export async function getSingleNewsData(link) {
   console.log(link, "linkkkkkkkkkkk");
 
@@ -392,9 +284,7 @@ export const getAllCategory = async () => {
   }
 };
 export async function getpartnerssdata(currentPage, search, filter) {
-  //   console.log("currentPage", currentPage);
-  //    console.log("search in server", search);
-  //    console.log("filter in server", filter);
+
   let page = currentPage || 1
   let pageSize = 12
   let dataFilter = {}
@@ -429,8 +319,8 @@ export async function usersdata(currentPage, search, filter) {
     dataFilter.status = filter
   }
 
-  const records = JSON.parse(JSON.stringify(await User.find(dataFilter).sort({ createdAt: -1 }).skip((page - 1) * pageSize).limit(pageSize)));
-  const totalCount = JSON.parse(JSON.stringify(await User.countDocuments(dataFilter)))
+  const records = JSON.parse(JSON.stringify(await Profile.find(dataFilter).sort({ createdAt: -1 }).skip((page - 1) * pageSize).limit(pageSize)));
+  const totalCount = JSON.parse(JSON.stringify(await Profile.countDocuments(dataFilter)))
   //   console.log("records",records);
   return { records, totalCount };
 }

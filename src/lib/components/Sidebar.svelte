@@ -109,13 +109,13 @@
 
 <!-- Sidebar -->
 <aside
-	class={`fixed top-0 left-0 h-full bg-[#1b2928] text-gray-300 w-64 shadow-2xl z-40 transform transition-transform duration-300 ease-in-out ${
+	class={`fixed top-0 left-0 h-full bg-primary-400 text-gray-300 w-64 shadow-2xl z-40 transform transition-transform duration-300 ease-in-out ${
 		isMobileOpen ? 'translate-x-0' : '-translate-x-full'
 	} lg:translate-x-0`}
 >
 	<!-- Sidebar Header -->
 	<div class="p-1 border-b border-gray-700">
-		<img src="/logo.png" alt="DigiToad" />
+		<img src="/skillsblock.png" alt="DigiToad" class="w-[100px]"/>
 	</div>
 
 	<!-- Navigation Links -->
@@ -126,7 +126,7 @@
 				class={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 transform hover:scale-105 ${
 					isActive(route.path)
 						? 'bg-gray-700 text-white shadow-lg'
-						: 'text-gray-400 hover:bg-gray-700 hover:text-white'
+						: 'text-gray-900 hover:bg-gray-700 hover:text-white'
 				}`}
 			>
 				<Icon icon={route.icon} class="w-5 h-5" />

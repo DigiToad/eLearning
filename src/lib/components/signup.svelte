@@ -13,7 +13,6 @@
   let country = "";
   let phone = "";
   let institution = "";
-  let branch = "";
   let password = "";
   let passwordConfirm = "";
 
@@ -31,11 +30,20 @@
   let showRedirectModal = false;
   let errors = {};
 
+  // ── Validators ──────────────────────────────────────────────
   function validateFirstName() {
     let e = { ...errors };
     if (!firstName.trim()) { e.firstName = "Required"; }
     else if (!/^[a-zA-Z\s]+$/.test(firstName)) { e.firstName = "Name can only contain letters and spaces"; }
     else { delete e.firstName; }
+    errors = e;
+  }
+
+  function validateLastName() {
+    let e = { ...errors };
+    if (!lastName.trim()) { e.lastName = "Required"; }
+    else if (!/^[a-zA-Z\s]+$/.test(lastName)) { e.lastName = "Name can only contain letters and spaces"; }
+    else { delete e.lastName; }
     errors = e;
   }
 
@@ -69,16 +77,16 @@
     return regex ? regex.source : "^[0-9]+$";
   }
 
-  function validatePhoneNumber(countryName, phone) {
+  function validatePhoneNumber(countryName, phoneVal) {
     let e = { ...errors };
-    if (!phone) { e.phone = "Required"; }
+    if (!phoneVal) { e.phone = "Required"; }
     else if (!countryName) { e.phone = "Select a country first"; }
     else {
       const matchedCountry = countries.find((c) => c.name === countryName);
       if (!matchedCountry) { e.phone = "Invalid country selected"; }
       else {
         const phoneRegex = new RegExp(getPhonePattern(matchedCountry.code));
-        if (!phoneRegex.test(phone)) { e.phone = `Invalid phone number for ${countryName}.`; }
+        if (!phoneRegex.test(phoneVal)) { e.phone = `Invalid phone number for ${countryName}.`; }
         else { delete e.phone; }
       }
     }
@@ -88,12 +96,6 @@
   function validateInstitution() {
     let e = { ...errors };
     if (!institution.trim()) { e.institution = "Required"; } else { delete e.institution; }
-    errors = e;
-  }
-
-  function validateBranch() {
-    let e = { ...errors };
-    if (!branch.trim()) { e.branch = "Required"; } else { delete e.branch; }
     errors = e;
   }
 
@@ -128,9 +130,14 @@
 
   function validateForm() {
     errors = {};
-    validateFirstName(); validateEmail(); validateCountry();
-    validatePhoneNumber(country, phone); validateInstitution();
-    validateBranch(); validatePassword(); validateConfirmPassword();
+    validateFirstName();
+    validateLastName();
+    validateEmail();
+    validateCountry();
+    validatePhoneNumber(country, phone);
+    validateInstitution();
+    validatePassword();
+    validateConfirmPassword();
     if (Object.keys(errors).length > 0) {
       toast.error("Please fill all required fields correctly");
       return false;
@@ -138,12 +145,15 @@
     return true;
   }
 
+  // ── Country dropdown ─────────────────────────────────────────
   function handleCountryFocus() { searchTerm = ""; filteredCountries = countries; showDropdown = true; highlightedIndex = -1; }
   function handleCountryBlur() { setTimeout(() => { searchTerm = country ? country : ""; }, 150); }
 
   function selectCountry(selectedCountry) {
-    country = selectedCountry.name; searchTerm = selectedCountry.name;
-    showDropdown = false; highlightedIndex = -1;
+    country = selectedCountry.name;
+    searchTerm = selectedCountry.name;
+    showDropdown = false;
+    highlightedIndex = -1;
     let e = { ...errors }; delete e.country; errors = e;
     if (phone) validatePhoneNumber(selectedCountry.name, phone);
   }
@@ -157,8 +167,10 @@
   }
 
   function handleInputChange(event) {
-    searchTerm = event.target.value; country = event.target.value;
-    filterCountriesWithoutAutoSelect(); showDropdown = true;
+    searchTerm = event.target.value;
+    country = event.target.value;
+    filterCountriesWithoutAutoSelect();
+    showDropdown = true;
     const match = countries.find((c) => c.name.toLowerCase() === searchTerm.toLowerCase());
     let e = { ...errors };
     if (match) { delete e.country; }
@@ -198,6 +210,7 @@
     return () => document.removeEventListener("click", handleClickOutside);
   });
 
+  // ── Password toggles ─────────────────────────────────────────
   function togglePasswordVisibility() {
     passwordVisible = !passwordVisible;
     const input = document.getElementById("password");
@@ -210,17 +223,20 @@
     if (input) input.type = confirmPasswordVisible ? "text" : "password";
   }
 
+  // ── Form submit ───────────────────────────────────────────────
   async function handleFormSubmission({ cancel, formData }) {
     if (!validateForm()) { cancel(); return; }
     isProcessing = true;
-    formData.append("email", email);
+    formData.append("role", "user");
     return async ({ result, update }) => {
       isProcessing = false;
       if (result.type === "redirect") { await applyAction(result); }
       if (result.type === "success") {
         if (result.data.success) {
-          await update(); toast.success(result.data.message);
-          await goto("/admin/dashboard"); location.reload();
+          await update();
+          toast.success(result.data.message);
+          await goto("/dashboard");
+          location.reload();
         } else {
           const errorText = result.data.message;
           if (errorText === "This email already exists. Please login or try with another.") { showRedirectModal = true; }
@@ -234,14 +250,19 @@
   function handleRedirectCancel() { showRedirectModal = false; }
 </script>
 
-<!-- PAGE -->
-<div class="min-h-screen bg-gray-50 font-noto-sans flex">
+<!-- ✅ h-screen + overflow-hidden = left panel never moves -->
+<div class="h-screen bg-gray-50 font-noto-sans flex overflow-hidden">
 
-  <!-- Left decorative panel -->
+  <!-- ───── LEFT PANEL (sticky, never scrolls) ───── -->
   <div class="hidden lg:flex lg:w-[38%] xl:w-[35%] bg-primary-950 flex-col justify-between p-10 relative overflow-hidden flex-shrink-0">
-    <div class="absolute top-0 right-0 w-64 h-64 rounded-full opacity-10" style="background:radial-gradient(circle, #58bb47, transparent); transform:translate(40%,-40%)"></div>
-    <div class="absolute bottom-0 left-0 w-80 h-80 rounded-full opacity-10" style="background:radial-gradient(circle, #369525, transparent); transform:translate(-40%,40%)"></div>
-    <div class="absolute inset-0 opacity-[0.03]" style="background-image: repeating-linear-gradient(0deg, #fff 0, #fff 1px, transparent 1px, transparent 40px), repeating-linear-gradient(90deg, #fff 0, #fff 1px, transparent 1px, transparent 40px)"></div>
+    <!-- decorative blobs -->
+    <div class="absolute top-0 right-0 w-64 h-64 rounded-full opacity-10 pointer-events-none"
+      style="background:radial-gradient(circle,#58bb47,transparent);transform:translate(40%,-40%)"></div>
+    <div class="absolute bottom-0 left-0 w-80 h-80 rounded-full opacity-10 pointer-events-none"
+      style="background:radial-gradient(circle,#369525,transparent);transform:translate(-40%,40%)"></div>
+    <div class="absolute inset-0 opacity-[0.03] pointer-events-none"
+      style="background-image:repeating-linear-gradient(0deg,#fff 0,#fff 1px,transparent 1px,transparent 40px),repeating-linear-gradient(90deg,#fff 0,#fff 1px,transparent 1px,transparent 40px)">
+    </div>
 
     <!-- Logo -->
     <div class="relative z-10">
@@ -251,8 +272,12 @@
         </div>
         <span class="text-white font-roboto font-bold text-xl tracking-tight">Learnify LMS</span>
       </div>
-      <h1 class="text-white text-3xl font-bold leading-snug mb-4">Start your<br/>learning journey<br/>today.</h1>
-      <p class="text-primary-300 text-sm leading-relaxed font-light">Join thousands of students accessing world-class courses from top institutions.</p>
+      <h1 class="text-white text-3xl font-bold leading-snug mb-4">
+        Start your<br />learning journey<br />today.
+      </h1>
+      <p class="text-primary-300 text-sm leading-relaxed font-light">
+        Join thousands of students accessing world-class courses from top institutions.
+      </p>
     </div>
 
     <!-- Features -->
@@ -272,14 +297,15 @@
       {/each}
     </div>
 
+    <!-- Footer -->
     <div class="relative z-10">
       <p class="text-primary-700 text-xs">© 2025 Learnify LMS. All rights reserved.</p>
     </div>
   </div>
 
-  <!-- Right: form panel -->
-  <div class="flex-1 flex items-start justify-center overflow-y-auto py-10 px-4 sm:px-8">
-    <div class="w-full max-w-[480px]">
+  <!-- ───── RIGHT PANEL (only this scrolls) ───── -->
+  <div class="flex-1 overflow-y-auto py-10 px-4 sm:px-8">
+    <div class="w-full max-w-[480px] mx-auto">
 
       <!-- Mobile logo -->
       <div class="flex items-center gap-2.5 mb-8 lg:hidden">
@@ -293,13 +319,17 @@
       <div class="mb-8">
         <p class="text-primary-600 text-xs font-semibold tracking-widest uppercase mb-1.5">Get Started</p>
         <h2 class="text-heading text-2xl font-bold font-roboto leading-tight">Create your account</h2>
-        <p class="text-description text-sm mt-1.5">Already have an account? <a href="/login" class="text-primary-600 font-semibold hover:text-primary-700 transition-colors">Sign in</a></p>
+        <p class="text-description text-sm mt-1.5">
+          Already have an account?
+          <a href="/login" class="text-primary-600 font-semibold hover:text-primary-700 transition-colors">Sign in</a>
+        </p>
       </div>
 
-      <form method="POST" action="?/register" use:enhance={handleFormSubmission}>
+      <form method="POST" action="?/register" use:enhance={handleFormSubmission} class="space-y-6">
+        <input type="hidden" name="role" value="user" />
 
-        <!-- SECTION: Personal -->
-        <div class="mb-6">
+        <!-- SECTION: Personal Info -->
+        <div>
           <div class="flex items-center gap-2 mb-4">
             <div class="w-5 h-5 rounded bg-primary-50 flex items-center justify-center flex-shrink-0">
               <Icon icon="mdi:account-outline" class="text-primary-600 text-xs" />
@@ -308,34 +338,52 @@
             <div class="flex-1 h-px bg-gray-200"></div>
           </div>
 
+          <!-- First & Last name side by side -->
           <div class="grid grid-cols-2 gap-3 mb-4">
             <div>
               <label for="firstName" class="block text-xs font-semibold text-description mb-1.5">
                 First Name <span class="text-primary-500">*</span>
               </label>
-              <input
-                id="firstName" type="text" name="firstName" maxlength="50"
-                bind:value={firstName} placeholder="First name"
-                on:input={(e) => { firstName = e.target.value.trimStart(); validateFirstName(); }}
-                class="w-full h-10 px-3 rounded-lg border text-sm text-heading placeholder-gray-300 bg-white outline-none transition-all duration-150
-                  {errors.firstName ? 'border-red-400 ring-2 ring-red-100' : 'border-gray-200 hover:border-gray-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-100'}"
-              />
+              <div class="relative">
+                <input
+                  id="firstName" type="text" name="firstName" maxlength="50"
+                  bind:value={firstName} placeholder="First name"
+                  on:input={(e) => { firstName = e.target.value.trimStart(); validateFirstName(); }}
+                  class="w-full h-10 px-3 pr-10 rounded-lg border text-sm text-heading placeholder-gray-300 bg-white outline-none transition-all duration-150
+                    {errors.firstName ? 'border-red-400 ring-2 ring-red-100' : 'border-gray-200 hover:border-gray-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-100'}"
+                />
+                <Icon icon="mdi:account-outline" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-300 text-base pointer-events-none" />
+              </div>
               {#if errors.firstName}
-                <p class="text-red-500 text-1s font-medium mt-1 flex items-center gap-1">
+                <p class="text-red-500 text-xs font-medium mt-1 flex items-center gap-1">
                   <Icon icon="mdi:alert-circle-outline" class="text-xs flex-shrink-0" />{errors.firstName}
                 </p>
               {/if}
             </div>
+
             <div>
-              <label for="lastName" class="block text-xs font-semibold text-description mb-1.5">Last Name</label>
-              <input
-                id="lastName" type="text" name="lastName" maxlength="50"
-                bind:value={lastName} placeholder="Last name"
-                class="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm text-heading placeholder-gray-300 bg-white outline-none transition-all duration-150 hover:border-gray-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-100"
-              />
+              <label for="lastName" class="block text-xs font-semibold text-description mb-1.5">
+                Last Name <span class="text-primary-500">*</span>
+              </label>
+              <div class="relative">
+                <input
+                  id="lastName" type="text" name="lastName" maxlength="50"
+                  bind:value={lastName} placeholder="Last name"
+                  on:input={(e) => { lastName = e.target.value.trimStart(); validateLastName(); }}
+                  class="w-full h-10 px-3 pr-10 rounded-lg border text-sm text-heading placeholder-gray-300 bg-white outline-none transition-all duration-150
+                    {errors.lastName ? 'border-red-400 ring-2 ring-red-100' : 'border-gray-200 hover:border-gray-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-100'}"
+                />
+                <Icon icon="mdi:account-outline" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-300 text-base pointer-events-none" />
+              </div>
+              {#if errors.lastName}
+                <p class="text-red-500 text-xs font-medium mt-1 flex items-center gap-1">
+                  <Icon icon="mdi:alert-circle-outline" class="text-xs flex-shrink-0" />{errors.lastName}
+                </p>
+              {/if}
             </div>
           </div>
 
+          <!-- Email -->
           <div>
             <label for="email" class="block text-xs font-semibold text-description mb-1.5">
               Email Address <span class="text-primary-500">*</span>
@@ -350,15 +398,15 @@
               <Icon icon="mdi:email-outline" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-300 text-base pointer-events-none" />
             </div>
             {#if errors.email}
-              <p class="text-red-500 text-1s font-medium mt-1 flex items-center gap-1">
+              <p class="text-red-500 text-xs font-medium mt-1 flex items-center gap-1">
                 <Icon icon="mdi:alert-circle-outline" class="text-xs flex-shrink-0" />{errors.email}
               </p>
             {/if}
           </div>
         </div>
 
-        <!-- SECTION: Contact -->
-        <div class="mb-6">
+        <!-- SECTION: Location & Contact -->
+        <div>
           <div class="flex items-center gap-2 mb-4">
             <div class="w-5 h-5 rounded bg-primary-50 flex items-center justify-center flex-shrink-0">
               <Icon icon="mdi:map-marker-outline" class="text-primary-600 text-xs" />
@@ -367,6 +415,7 @@
             <div class="flex-1 h-px bg-gray-200"></div>
           </div>
 
+          <!-- Country dropdown -->
           <div class="dropdown-container relative mb-4">
             <label for="countryInput" class="block text-xs font-semibold text-description mb-1.5">
               Country <span class="text-primary-500">*</span>
@@ -374,8 +423,11 @@
             <div class="relative">
               <input
                 id="countryInput" type="text" name="country" autocomplete="off"
-                bind:value={searchTerm} on:input={handleInputChange}
-                on:keydown={handleKeyDown} on:focus={handleCountryFocus} on:blur={handleCountryBlur}
+                bind:value={searchTerm}
+                on:input={handleInputChange}
+                on:keydown={handleKeyDown}
+                on:focus={handleCountryFocus}
+                on:blur={handleCountryBlur}
                 placeholder="Search country..."
                 class="w-full h-10 pl-3 pr-10 rounded-lg border text-sm text-heading placeholder-gray-300 bg-white outline-none transition-all duration-150
                   {errors.country ? 'border-red-400 ring-2 ring-red-100' : 'border-gray-200 hover:border-gray-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-100'}"
@@ -383,7 +435,7 @@
               <Icon icon="mdi:chevron-down" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-300 text-base pointer-events-none" />
             </div>
             {#if errors.country}
-              <p class="text-red-500 text-1s font-medium mt-1 flex items-center gap-1">
+              <p class="text-red-500 text-xs font-medium mt-1 flex items-center gap-1">
                 <Icon icon="mdi:alert-circle-outline" class="text-xs flex-shrink-0" />{errors.country}
               </p>
             {/if}
@@ -400,13 +452,14 @@
                     on:mouseenter={() => (highlightedIndex = i)}
                   >
                     <span>{c.name}</span>
-                    <span class="text-2s text-gray-400 font-mono">{c.code}</span>
+                    <span class="text-xs text-gray-400 font-mono">{c.code}</span>
                   </li>
                 {/each}
               </ul>
             {/if}
           </div>
 
+          <!-- Phone -->
           <div>
             <label for="phone" class="block text-xs font-semibold text-description mb-1.5">
               Phone Number <span class="text-primary-500">*</span>
@@ -414,7 +467,8 @@
             <div class="relative">
               <input
                 id="phone" type="tel" name="phone" maxlength="15"
-                bind:value={phone} on:input={() => validatePhoneNumber(country, phone)}
+                bind:value={phone}
+                on:input={() => validatePhoneNumber(country, phone)}
                 placeholder="Enter your phone number"
                 class="w-full h-10 pl-3 pr-10 rounded-lg border text-sm text-heading placeholder-gray-300 bg-white outline-none transition-all duration-150
                   {errors.phone ? 'border-red-400 ring-2 ring-red-100' : 'border-gray-200 hover:border-gray-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-100'}"
@@ -422,15 +476,15 @@
               <Icon icon="mdi:phone-outline" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-300 text-base pointer-events-none" />
             </div>
             {#if errors.phone}
-              <p class="text-red-500 text-1s font-medium mt-1 flex items-center gap-1">
+              <p class="text-red-500 text-xs font-medium mt-1 flex items-center gap-1">
                 <Icon icon="mdi:alert-circle-outline" class="text-xs flex-shrink-0" />{errors.phone}
               </p>
             {/if}
           </div>
         </div>
 
-        <!-- SECTION: Academic -->
-        <div class="mb-6">
+        <!-- SECTION: Academic Details -->
+        <div>
           <div class="flex items-center gap-2 mb-4">
             <div class="w-5 h-5 rounded bg-primary-50 flex items-center justify-center flex-shrink-0">
               <Icon icon="mdi:school-outline" class="text-primary-600 text-xs" />
@@ -439,7 +493,7 @@
             <div class="flex-1 h-px bg-gray-200"></div>
           </div>
 
-          <div class="mb-4">
+          <div>
             <label for="institution" class="block text-xs font-semibold text-description mb-1.5">
               Institution <span class="text-primary-500">*</span>
             </label>
@@ -454,36 +508,15 @@
               <Icon icon="mdi:office-building-outline" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-300 text-base pointer-events-none" />
             </div>
             {#if errors.institution}
-              <p class="text-red-500 text-1s font-medium mt-1 flex items-center gap-1">
+              <p class="text-red-500 text-xs font-medium mt-1 flex items-center gap-1">
                 <Icon icon="mdi:alert-circle-outline" class="text-xs flex-shrink-0" />{errors.institution}
-              </p>
-            {/if}
-          </div>
-
-          <div>
-            <label for="branch" class="block text-xs font-semibold text-description mb-1.5">
-              Branch / Programme <span class="text-primary-500">*</span>
-            </label>
-            <div class="relative">
-              <input
-                id="branch" type="text" name="branch" maxlength="100"
-                bind:value={branch} on:input={validateBranch}
-                placeholder="e.g. Computer Science"
-                class="w-full h-10 pl-3 pr-10 rounded-lg border text-sm text-heading placeholder-gray-300 bg-white outline-none transition-all duration-150
-                  {errors.branch ? 'border-red-400 ring-2 ring-red-100' : 'border-gray-200 hover:border-gray-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-100'}"
-              />
-              <Icon icon="mdi:book-open-outline" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-300 text-base pointer-events-none" />
-            </div>
-            {#if errors.branch}
-              <p class="text-red-500 text-1s font-medium mt-1 flex items-center gap-1">
-                <Icon icon="mdi:alert-circle-outline" class="text-xs flex-shrink-0" />{errors.branch}
               </p>
             {/if}
           </div>
         </div>
 
         <!-- SECTION: Security -->
-        <div class="mb-7">
+        <div>
           <div class="flex items-center gap-2 mb-4">
             <div class="w-5 h-5 rounded bg-primary-50 flex items-center justify-center flex-shrink-0">
               <Icon icon="mdi:lock-outline" class="text-primary-600 text-xs" />
@@ -492,6 +525,7 @@
             <div class="flex-1 h-px bg-gray-200"></div>
           </div>
 
+          <!-- Password -->
           <div class="mb-4">
             <label for="password" class="block text-xs font-semibold text-description mb-1.5">
               Password <span class="text-primary-500">*</span>
@@ -512,22 +546,23 @@
               </button>
             </div>
             {#if errors.password}
-              <p class="text-red-500 text-1s font-medium mt-1 flex items-center gap-1">
+              <p class="text-red-500 text-xs font-medium mt-1 flex items-center gap-1">
                 <Icon icon="mdi:alert-circle-outline" class="text-xs flex-shrink-0" />{errors.password}
               </p>
             {/if}
           </div>
 
+          <!-- Strength meter -->
           {#if typing}
             <div class="mb-4 bg-gray-50 rounded-xl border border-gray-100 px-4 py-3">
               <div class="grid grid-cols-2 gap-y-2 gap-x-4 mb-3">
                 {#each [
                   { label: "No common words", pass: !password.toLowerCase().includes("password") },
-                  { label: "8+ characters", pass: password.length >= 8 },
+                  { label: "8+ characters",   pass: password.length >= 8 },
                   { label: "Uppercase & numbers", pass: /[a-z]/.test(password) && /[A-Z]/.test(password) && /\d/.test(password) },
-                  { label: "Special character", pass: /[!@#$%^&*\-]/.test(password) }
+                  { label: "Special character",   pass: /[!@#$%^&*\-]/.test(password) }
                 ] as rule}
-                  <div class="flex items-center gap-1.5 text-2s font-medium {rule.pass ? 'text-primary-600' : 'text-gray-400'}">
+                  <div class="flex items-center gap-1.5 text-xs font-medium {rule.pass ? 'text-primary-600' : 'text-gray-400'}">
                     <Icon icon={rule.pass ? 'lets-icons:check-fill' : 'lets-icons:close-ring-duotone'} class="w-3.5 h-3.5 flex-shrink-0" />
                     {rule.label}
                   </div>
@@ -542,12 +577,13 @@
                   </div>
                 {/each}
               </div>
-              <p class="text-2s font-semibold {passwordStrength <= 50 ? 'text-red-500' : passwordStrength <= 75 ? 'text-yellow-600' : 'text-primary-600'}">
+              <p class="text-xs font-semibold {passwordStrength <= 50 ? 'text-red-500' : passwordStrength <= 75 ? 'text-yellow-600' : 'text-primary-600'}">
                 {passwordStrength <= 25 ? 'Very Weak' : passwordStrength <= 50 ? 'Weak' : passwordStrength <= 75 ? 'Moderate' : 'Strong'}
               </p>
             </div>
           {/if}
 
+          <!-- Confirm Password -->
           <div>
             <label for="passwordConfirm" class="block text-xs font-semibold text-description mb-1.5">
               Confirm Password <span class="text-primary-500">*</span>
@@ -568,7 +604,7 @@
               </button>
             </div>
             {#if errors.passwordConfirm}
-              <p class="text-red-500 text-1s font-medium mt-1 flex items-center gap-1">
+              <p class="text-red-500 text-xs font-medium mt-1 flex items-center gap-1">
                 <Icon icon="mdi:alert-circle-outline" class="text-xs flex-shrink-0" />{errors.passwordConfirm}
               </p>
             {/if}
@@ -593,13 +629,12 @@
           {/if}
         </button>
 
-        <p class="text-2s text-gray-400 text-center mt-4 leading-relaxed">
+        <p class="text-xs text-gray-400 text-center mt-4 leading-relaxed">
           By registering, you agree to our
           <a href="/terms" class="text-primary-600 hover:underline">Terms of Service</a>
           and
           <a href="/privacy" class="text-primary-600 hover:underline">Privacy Policy</a>
         </p>
-
       </form>
     </div>
   </div>

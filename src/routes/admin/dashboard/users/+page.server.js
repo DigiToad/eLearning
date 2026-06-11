@@ -16,7 +16,7 @@ export const load = async ({ locals }) => {
     try {
       
       const  users  = await usersdata();
-    //   console.log(users,"users");
+      // console.log(users,"users");
       const isAdmin =  ADMIN_EMAIL;
       return {
         users,
@@ -24,7 +24,7 @@ export const load = async ({ locals }) => {
 
       } ;
     } catch (error) {
-      console.error("Error in load:", error);
+      // console.error("Error in load:", error);
       return {
         allBlogs: [],
         error: "Unexpected error loading blogs"

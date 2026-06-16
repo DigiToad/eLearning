@@ -30,11 +30,8 @@
     }
 
     async function logout() {
-        await fetch("/logout", { method: "POST" });
-        localStorage.removeItem("user");
-        user = null;
-        goto("/");
-    }
+    await goto('/logout');
+}
 </script>
 
 <!-- Navbar -->

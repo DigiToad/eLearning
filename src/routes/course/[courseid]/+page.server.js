@@ -3,7 +3,8 @@ import { error, fail } from '@sveltejs/kit';
 import { Courseinfo } from "$lib/server/models/Courseinfo.js";
 import { Section } from '$lib/server/models/Section.js';
 import { SubSection } from '$lib/server/models/SubSection.js';
-import { UserProgress } from '$lib/server/models/Userprogress.js';
+// import { UserProgress } from '$lib/server/models/Userprogress.js';
+import { UserProgress } from '$lib/server/models/UserProgress.js';
 import Profile from '$lib/server/models/Profile.js';
 
 

@@ -4,7 +4,6 @@ const emailVerificationSchema = new mongoose.Schema({
     token: { type: String, required: true },
     expiry: { type: Date, required: true },
     isEmailVerified: { type: Boolean, default: false },
-    isPhoneVerified: { type: Boolean, default: false },
     verificationType: { type: String, required: true },
     userId: { type: String }
 },{

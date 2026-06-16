@@ -24,27 +24,26 @@ const chemiDashProfileSchema = new mongoose.Schema(
     institution: {
       type: String,
     },
-    branch: {
-      type: String,
-    },
     userId: {
       type: String,
     },
     resetPasswordToken: { type: String },
     resetTokenExpiry: { type: Date },
     acessedcourse: { type: [String], default: [] },
-      // interestedcourse: { type: [String], default: [] }
-      interestedcourse: {
-  type: [{
-    courseId:    { type: String, required: true },
-    courseName:  { type: String, default: '' },
-    coursePrice: { type: String, default: '' },
+    // interestedcourse: { type: [String], default: [] }
+    interestedcourse: {
+      type: [{
+        courseId: { type: String, required: true },
+        courseName: { type: String, default: '' },
+        coursePrice: { type: String, default: '' },
 
-  }],
-  default: [],
-   _id:false
-}
-
+      }],
+      default: [],
+      _id: false
+    },
+    isEmailVerified: {
+      type: String,
+    },
   },
   {
     timestamps: true,

@@ -41,9 +41,10 @@ export const auth = lucia({
   // env: "PROD", 
   env: dev ? "DEV" : "PROD",
   secret: LUCIA_SECRET,
-  cookies: {
-    secure: true, 
-  },
+  // Temporary comment 
+  // cookies: {
+  //   secure: true, 
+  // },
   transformUser: (user) => ({
     id: user.id.toString(),
     username: user.username,

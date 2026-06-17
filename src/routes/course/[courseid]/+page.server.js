@@ -6,7 +6,7 @@ import { SubSection } from '$lib/server/models/SubSection.js';
 import { UserProgress } from '$lib/server/models/UserProgress.js';
 import Profile from '$lib/server/models/Profile.js';
 import { emailTemplates } from '$lib/email/templates.js';
-import {PUBLIC_WEBSITE_URL} from '$env/static/private';
+import {PUBLIC_WEBSITE_URL} from '$env/static/public';
 export async function load({ params, locals }) {
     const courseId = params.courseid;
     if (!courseId) throw error(400, 'Missing course ID');

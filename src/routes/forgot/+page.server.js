@@ -1,7 +1,7 @@
 import Profile from '$lib/server/models/Profile.js';
 import { sendEmail } from '$lib/server/sendEmail.js';
 import crypto from 'crypto'; 
-import {PUBLIC_WEBSITE_URL} from '$env/static/private';
+import {PUBLIC_WEBSITE_URL} from '$env/static/public';
 import {PUBLIC_WEBSITE_NAME} from '$env/static/public';
 import { emailTemplates } from '$lib/email/templates.js';
 

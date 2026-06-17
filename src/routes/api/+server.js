@@ -36,12 +36,17 @@ export async function POST({ request }) {
         const isVideo = allowedVideoTypes.includes(file.type);
 
         // Size limits: images 2MB, videos 100MB
-        const maxSize = isVideo ? 1000 * 1024 * 1024 : 5 * 1024 * 1024;
+        // const maxSize = isVideo ? 1000 * 1024 * 1024 : 5 * 1024 * 1024;
+        // if (file.size > maxSize) {
+        //     console.error('❌ File too large:', file.size);
+        //     throw error(400, `File too large. Max size: ${isVideo ? '1000MB' : '5MB'}`);
+        // }
+        const maxSize = isVideo ? 2 * 1024 * 1024 * 1024 : 5 * 1024 * 1024;
+
         if (file.size > maxSize) {
             console.error('❌ File too large:', file.size);
-            throw error(400, `File too large. Max size: ${isVideo ? '1000MB' : '5MB'}`);
+            throw error(400, `File too large. Max size: ${isVideo ? '2GB' : '5MB'}`);
         }
-
         console.log('📂 Processing file:', filename, 'Size:', file.size, 'Type:', file.type, isVideo ? '(video)' : '(image)');
 
         const buffer = Buffer.from(await file.arrayBuffer());

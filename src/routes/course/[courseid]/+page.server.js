@@ -3,11 +3,10 @@ import { error, fail } from '@sveltejs/kit';
 import { Courseinfo } from "$lib/server/models/Courseinfo.js";
 import { Section } from '$lib/server/models/Section.js';
 import { SubSection } from '$lib/server/models/SubSection.js';
-// import { UserProgress } from '$lib/server/models/Userprogress.js';
 import { UserProgress } from '$lib/server/models/UserProgress.js';
 import Profile from '$lib/server/models/Profile.js';
-
-
+import { emailTemplates } from '$lib/email/templates.js';
+import {PUBLIC_WEBSITE_URL} from '$env/static/private';
 export async function load({ params, locals }) {
     const courseId = params.courseid;
     if (!courseId) throw error(400, 'Missing course ID');
@@ -241,97 +240,7 @@ export const actions = {
       return fail(500, { error: err?.message || 'Internal Server Error' });
     }
   },
-  //  interested: async ({ request, locals }) => {
-  //   let formData;
-  //   try {
-  //     formData = await request.formData();
-  //   } catch (err) {
-  //     return fail(400, { error: 'Invalid form data' });
-  //   }
 
-  //   const get = (key) => formData.get(key)?.toString().trim() ?? '';
-
-  //   // Prefer server-side user from locals
-  //   const serverUser = locals.user ?? null;
-  //   const userId     = serverUser
-  //     ? String(serverUser.userId ?? serverUser.id ?? '')
-  //     : get('userId');
-  //   const userEmail  = serverUser ? (serverUser.email ?? '') : get('userEmail');
-
-  //   const courseId    = get('courseId');
-  //   const courseName  = get('courseName');
-  //   const coursePrice = get('coursePrice');
-
-  //   if (!userId || !courseId) {
-  //     return fail(400, { error: 'Missing userId or courseId' });
-  //   }
-
-  //   try {
-  //     // Push courseId into interestedcourse array only if not already present
-  //     await Profile.updateOne(
-  //       { userId },
-  //       {
-  //         $addToSet: { interestedcourse: courseId },
-  //         $set:      { updatedAt: new Date() },
-  //       }
-  //     );
-
-  //     console.log(`✅ Interest saved — user:${userId} course:${courseId} (${courseName}) ₹${coursePrice}`);
-  //     return { ok: true, type: 'interested' };
-  //   } catch (err) {
-  //     console.error('Interested action DB error:', err);
-  //     return fail(500, { error: err?.message || 'Internal Server Error' });
-  //   }
-  // },
-//   interested: async ({ request, locals }) => {
-//   let formData;
-//   try {
-//     formData = await request.formData();
-//   } catch (err) {
-//     return fail(400, { error: 'Invalid form data' });
-//   }
-
-//   const get = (key) => formData.get(key)?.toString().trim() ?? '';
-
-//   const serverUser = locals.user ?? null;
-//   const userId     = serverUser
-//     ? String(serverUser.userId ?? serverUser.id ?? '')
-//     : get('userId');
-//   const userEmail  = serverUser ? (serverUser.email ?? '') : get('userEmail');
-//   const courseId   = get('courseId');
-//   const courseName  = get('courseName');
-//   const coursePrice = get('coursePrice');
-
-//   if (!userId || !courseId) {
-//     return fail(400, { error: 'Missing userId or courseId' });
-//   }
-
-//   try {
-//     // Check if already interested — no duplicate push
-//     const alreadyInterested = await Profile.exists({
-//       userId,
-//       'interestedcourse.courseId': courseId,
-//     });
-
-//     if (!alreadyInterested) {
-//       await Profile.updateOne(
-//         { userId },
-//         {
-//           $push: {
-//             interestedcourse: { courseId, courseName, coursePrice, addedAt: new Date() }
-//           },
-//           $set: { updatedAt: new Date() },
-//         }
-//       );
-
-//     } 
-
-//     return { ok: true, type: 'interested' };
-//   } catch (err) {
-//     console.error('Interested action DB error:', err);
-//     return fail(500, { error: err?.message || 'Internal Server Error' });
-//   }
-// },
 interested: async ({ request, locals }) => {
   let formData;
   try {
@@ -387,7 +296,7 @@ interested: async ({ request, locals }) => {
         courseName,
         coursePrice,
         websiteName: Digitoad,
-        appUrl: APP_URL,
+        appUrl: PUBLIC_WEBSITE_URL,
       });
 
       await sendNotificationEmail(
@@ -404,7 +313,4 @@ interested: async ({ request, locals }) => {
     return fail(500, { error: err?.message || 'Internal Server Error' });
   }
 },
-    
-
-  
 };

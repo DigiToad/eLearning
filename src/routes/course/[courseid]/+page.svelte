@@ -1474,7 +1474,7 @@
 					</div>
 				{/if}
 
-				{#if certificateReady && hasAccess}
+				<!-- {#if certificateReady && hasAccess}
 					<div
 						class="flex items-center gap-4 mx-7 my-5 p-[18px] bg-amber-500/[0.06] border border-amber-500/20 rounded-2xl flex-wrap"
 					>
@@ -1508,7 +1508,7 @@
 							Download Certificate
 						</button>
 					</div>
-				{/if}
+				{/if} -->
 			</main>
 
 			<!-- ── Sidebar ─────────────────────────────────────────────────────── -->

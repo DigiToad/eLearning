@@ -1,7 +1,7 @@
 import Profile from '$lib/server/models/Profile.js';
 import { sendEmail } from '$lib/server/sendEmail.js';
 import crypto from 'crypto'; 
-import {APP_URL_ADMIN} from '$env/static/private';
+import {PUBLIC_WEBSITE_URL} from '$env/static/private';
 import {PUBLIC_WEBSITE_NAME} from '$env/static/public';
 import { emailTemplates } from '$lib/email/templates.js';
 
@@ -29,7 +29,7 @@ export const actions = {
       user.resetPasswordToken = resetToken;
       user.resetTokenExpiry = Date.now() + EXPIRATION_TIME;
       await user.save();
-      const resetLink = `${APP_URL}/reset-password?token=${resetToken}`;
+      const resetLink = `${PUBLIC_WEBSITE_URL}/reset-password?token=${resetToken}`;
       const webname = PUBLIC_WEBSITE_NAME;
       const content = emailTemplates.resetPasswordTemplate(resetLink, webname);
 

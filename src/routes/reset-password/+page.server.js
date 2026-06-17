@@ -52,6 +52,6 @@ export const actions = {
         }
 
         // ✅ redirect is now reachable, outside the try/catch
-        throw redirect(303, '/admin/login');
+        throw redirect(303, '/login');
     }
 };

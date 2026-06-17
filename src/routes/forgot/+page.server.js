@@ -5,9 +5,7 @@ import {PUBLIC_WEBSITE_URL} from '$env/static/public';
 import {PUBLIC_WEBSITE_NAME} from '$env/static/public';
 import { emailTemplates } from '$lib/email/templates.js';
 
-
 const EXPIRATION_TIME = 1000 * 60 * 60; 
-
 export const actions = {
   resetrequest: async ({ request }) => {
     const body = Object.fromEntries(await request.formData());

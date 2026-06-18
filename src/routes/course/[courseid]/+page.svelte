@@ -1631,8 +1631,7 @@
 												stroke-width="3"
 												><polyline
 													points="20 6 9 17 4 12"
-												/></svg
-											>
+												/></svg>
 										{:else if !accessible}
 											<svg
 												width="9"

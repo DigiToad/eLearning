@@ -239,7 +239,7 @@
 
                     <!-- Back to login -->
                     <div class="mt-6 text-center">
-                        <a href="/admin/login" class="text-sm text-primary-600 hover:text-primary-700 font-medium inline-flex items-center group transition-colors duration-200">
+                        <a href="/login" class="text-sm text-primary-600 hover:text-primary-700 font-medium inline-flex items-center group transition-colors duration-200">
                             <svg class="w-4 h-4 mr-1 transform group-hover:-translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                             </svg>
@@ -279,7 +279,7 @@
 
                     <div class="flex flex-col space-y-3">
                         <a 
-                            href="/admin/forgot" 
+                            href="/forgot" 
                             class="w-full bg-gradient-to-r from-primary-400 to-primary-500 hover:from-primary-500 hover:to-primary-600 text-white rounded-lg py-3.5 px-4 font-semibold text-sm transition-all duration-200 transform hover:scale-[1.02] hover:shadow-lg active:scale-[0.98] flex items-center justify-center space-x-2"
                         >
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -289,7 +289,7 @@
                         </a>
                         
                         <a 
-                            href="/admin/login" 
+                            href="/login" 
                             class="text-sm text-primary-600 hover:text-primary-700 font-medium inline-flex items-center justify-center group transition-colors duration-200"
                         >
                             <svg class="w-4 h-4 mr-1 transform group-hover:-translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">

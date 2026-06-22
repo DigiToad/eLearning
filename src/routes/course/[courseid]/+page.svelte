@@ -12,9 +12,8 @@
 
 
 
-
 <!-- Disable right-click and devtools keyboard shortcuts globally -->
-<!-- <svelte:window
+ <svelte:window
     on:contextmenu|preventDefault={() => {}}
     on:keydown={(e) => {
         if (
@@ -46,6 +45,6 @@
         /* Allows clicks/play controls through, but intercepts right-click */
         background: transparent;
     }
-</style> -->
+</style> 
 
 <Courseindi {data} />

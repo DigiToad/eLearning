@@ -6,7 +6,7 @@
 
 
 <script>
-    import Courseindi from "$lib/components/Courseindi.svelte";
+    import Courseindi from "$lib/components/Course.svelte";
     export let data;
 </script>
 

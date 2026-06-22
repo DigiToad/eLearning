@@ -24,8 +24,6 @@
             (c) => c.courseId === courseId,
         );
 
-
-
     const MAX_SEEK_DELTA = 30;
     const MAX_NATIVE_DELTA = 1.5;
 
@@ -1255,20 +1253,20 @@
                 {:else if currentLesson}
                     <!-- VIDEO LESSON -->
                     <div class="flex flex-col">
-                        <!-- <div
+                        <div
 							class="relative bg-black w-full"
 							style="aspect-ratio:16/9; max-height:62vh;"
-						> -->
-                        <div
+						>
+                        <!-- <div
                             class="relative bg-black w-full"
                             style="aspect-ratio:16/9; max-height:62vh;"
                             on:contextmenu|preventDefault={() => {}}
-                        >
-                            <div
+                        > -->
+                            <!-- <div
                                 class="absolute inset-0 z-10 bg-transparent select-none"
                                 on:contextmenu|preventDefault={() => {}}
                                 style="pointer-events: none;"
-                            ></div>
+                            ></div> -->
                             {#if videoLoading}
                                 <div
                                     class="absolute inset-0 flex items-center justify-center bg-black z-10"
@@ -1303,7 +1301,10 @@
                                     on:ended={onVideoEnded}
                                 ></video>
                             {/if}  -->
-                            {#if isYouTube(currentLesson.videoUrl)}
+
+
+                            <!-- Preventer ctr+shift+i -->
+                             {#if isYouTube(currentLesson.videoUrl)}
                                 <div
                                     class="absolute inset-0 z-20"
                                     style="background: transparent;"
@@ -1331,7 +1332,7 @@
                                     on:load={() => (videoLoading = false)}
                                     title={currentLesson.title}
                                 ></iframe>
-                            {/if} 
+                            {/if}
                             {#if isLessonComplete(currentLesson.id)}
                                 <div
                                     class="absolute top-3 right-3 z-20 flex items-center gap-1.5 text-[11px] font-bold px-3 py-1 rounded-full bg-emerald-600/90 text-emerald-100 backdrop-blur-sm"

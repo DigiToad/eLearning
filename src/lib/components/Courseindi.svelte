@@ -24,6 +24,8 @@
             (c) => c.courseId === courseId,
         );
 
+
+        
     const MAX_SEEK_DELTA = 30;
     const MAX_NATIVE_DELTA = 1.5;
 

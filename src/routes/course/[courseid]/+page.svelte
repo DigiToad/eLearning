@@ -12,6 +12,7 @@
 
 
 
+
 <!-- Disable right-click and devtools keyboard shortcuts globally -->
 <!-- <svelte:window
     on:contextmenu|preventDefault={() => {}}

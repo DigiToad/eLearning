@@ -288,13 +288,13 @@
 
                     <div class="flex flex-col gap-1">
                         <button
-                            on:click={() => navigateTo("/learn")}
+                            on:click={() => navigateTo("/course")}
                             class="w-full text-left py-2.5 px-2 rounded hover:bg-blue-800 transition-colors"
                         >
                             Learn
                         </button>
                         <button
-                            on:click={() => navigateTo("/mycourses")}
+                            on:click={() => navigateTo("/course")}
                             class="w-full text-left py-2.5 px-2 rounded hover:bg-blue-800 transition-colors"
                         >
                             My Courses

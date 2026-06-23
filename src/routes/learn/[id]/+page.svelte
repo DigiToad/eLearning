@@ -37,7 +37,7 @@
 	// ─── Guard: redirect if course not found ────────────────────────
 	onMount(() => {
 		if (!course) {
-			goto('/learn');
+			goto('/course');
 			return;
 		}
 		loadProgress();
@@ -270,7 +270,7 @@
 	<!-- Top Bar -->
 	<header class="h-14 border-b border-white/10 bg-[#12121a] flex items-center px-4 gap-4 shrink-0 z-30 sticky top-0">
 		<button
-			on:click={() => goto('/learn')}
+			on:click={() => goto('/course')}
 			class="text-gray-400 hover:text-white transition flex items-center gap-1.5 text-sm shrink-0"
 		>
 			<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -1,5 +1,6 @@
 <script>
-	import Learn from '$lib/components/Learn.svelte';
+	// import Learn from '$lib/components/Learn.svelte';
+	import Learn from '$lib/components/Landingnew.svelte';
 	import SEO from '$lib/components/SEO.svelte';
 	import { PUBLIC_WEBSITE_URL, PUBLIC_WEBSITE_NAME } from '$env/static/public';
 	

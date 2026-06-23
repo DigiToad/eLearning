@@ -334,7 +334,7 @@
             </button>
 
               <div class=" justify-center text-gray-600">Don't you have account 
-              <a href="/signup" class="text-base text-primary-600 hover:text-primary-700 hover:underline">
+              <a href="/register" class="text-base text-primary-600 hover:text-primary-700 hover:underline">
                 sign up 
               </a>
             </div>

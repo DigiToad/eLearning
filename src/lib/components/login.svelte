@@ -93,21 +93,21 @@
   <div class="w-full max-w-5xl flex flex-col md:flex-row shadow-2xl rounded-2xl overflow-hidden">
 
     <!-- ───── LEFT PANEL ───── -->
-    <div class="md:w-2/5 w-full flex flex-col justify-between bg-[#4040cc] text-white p-8 md:p-10 relative overflow-hidden">
+    <div class="md:w-2/5 w-full flex flex-col justify-between bg-primary-500 text-white p-8 md:p-10 relative overflow-hidden">
       <!-- decorative circles -->
       <div class="absolute -top-16 -right-16 w-56 h-56 rounded-full bg-white/5 pointer-events-none"></div>
       <div class="absolute -bottom-10 -left-10 w-40 h-40 rounded-full bg-white/5 pointer-events-none"></div>
 
       <!-- Logo -->
-      <div class="relative z-10 mb-8 md:mb-0">
+      <!-- <div class="relative z-10 mb-8 md:mb-0">
         <img src="/skillsblock.png" alt="Skills block" class="w-24" />
-      </div>
+      </div> -->
 
       <!-- Headline -->
       <div class="relative z-10 my-8 md:my-0">
         <h1 class="text-2xl md:text-3xl font-extrabold leading-tight">
-          <span class="text-[#F5A623]">Gamify</span> Learning, ✦<br />
-          <span class="text-[#F5A623]">Simplify</span> Employment
+          <span class="text-yellow-400">Gamify</span> Learning, ✦<br />
+          <span class="text-yellow-400">Simplify</span> Employment
         </h1>
       </div>
 
@@ -133,8 +133,8 @@
     <!-- ───── RIGHT PANEL ───── -->
     <div class="md:w-3/5 w-full bg-white flex items-center justify-center p-8 md:p-12">
       <div class="w-full max-w-sm">
-        <h2 class="text-2xl font-bold text-primary-600 mb-1">Sign In</h2>
-        <p class="text-sm text-gray-500 mb-6">Welcome back! </p>
+        <h2 class="text-2xl font-bold text-primary-500 mb-1">Sign In</h2>
+        <p class="text-sm text-gray-600 mb-6">Welcome back! </p>
 
         <!-- Role Toggle -->
         <!-- <div class="mb-5">
@@ -280,14 +280,15 @@
             <div class="space-y-1">
               <label for="emailOrUsername" class="block text-sm font-medium text-gray-700">Email</label>
               <div class="relative">
-                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                  <Icon icon="heroicons:envelope" class="text-gray-400" />
-                </div>
+               
                 <input type="text" name="emailOrUsername" id="emailOrUsername"
                   bind:value={emailOrUsername} on:input={validateEmailOrUsername}
                   placeholder="Enter your email"
-                  class="pl-10 w-full rounded-md border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-0"
+                  class="pl-3 w-full rounded-md border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-0"
                 />
+                 <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                  <Icon icon="ic:outline-email" class="text-gray-600" />
+                </div>
               </div>
               {#if errors.emailOrUsername}<p class="text-red-500 text-xs mt-1">{errors.emailOrUsername}</p>{/if}
             </div>
@@ -295,9 +296,9 @@
             <div class="space-y-1">
               <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
               <div class="relative">
-                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <!-- <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                   <Icon icon="heroicons:lock-closed" class="text-gray-400" />
-                </div>
+                </div> -->
                 {#if showPassword}
                   <input type="text" name="password" id="password" placeholder="Password"
                     bind:value={password}
@@ -308,13 +309,13 @@
                   <input type="password" name="password" id="password" placeholder="Password"
                     bind:value={password}
                     on:input={() => { password = password.trim(); validErrorpass = !password ? "Please enter a valid Password" : ""; }}
-                    class="pl-10 w-full rounded-md border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-0"
+                    class="pl-3 w-full rounded-md border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-0"
                   />
                 {/if}
                 <button type="button"
                   class="absolute top-3 right-2.5 text-gray-500 hover:text-gray-700 focus:outline-none"
                   on:click={() => (showPassword = !showPassword)}>
-                  <Icon icon={showPassword ? "mdi:eye-off-outline" : "mdi:eye-outline"} class="w-5 h-5" />
+                  <Icon icon={showPassword ? "mdi:eye-off-outline" : "mdi:eye-outline"} class="w-5 h-5 text-gray-500" />
                 </button>
               </div>
               {#if validErrorpass}<p class="text-red-500 text-xs mt-1">{validErrorpass}</p>{/if}
@@ -327,12 +328,12 @@
             </div>
 
             <button type="submit"
-              class="w-full bg-primary-600 hover:bg-primary-700 text-white rounded-md py-2.5 font-medium transition-all duration-200 hover:shadow-lg flex items-center justify-center capitalize">
+              class="w-full bg-primary-500 hover:bg-primary-600 text-white rounded-md py-2.5 font-medium transition-all duration-200 hover:shadow-lg flex items-center justify-center capitalize">
               <Icon icon="heroicons:arrow-right-on-rectangle" class="mr-2 w-5 h-5" />
               Sign In 
             </button>
 
-              <div class=" justify-center">Don't you have account 
+              <div class=" justify-center text-gray-600">Don't you have account 
               <a href="/signup" class="text-base text-primary-600 hover:text-primary-700 hover:underline">
                 sign up 
               </a>

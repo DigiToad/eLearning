@@ -572,8 +572,8 @@
 
 {#if course}
     <div
-        class="min-h-screen bg-[#0d0d11] text-[#e8e6f0] flex flex-col"
-        style="font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;"
+        class="min-h-screen  flex flex-col"
+        
     >
         <!-- ══ Top Bar ══════════════════════════════════════════════════════════ -->
         <header
@@ -607,7 +607,7 @@
 
             {#if !hasAccess}
                 <span
-                    class="text-[11px] font-semibold tracking-[0.04em] px-2.5 py-[3px] rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/25 whitespace-nowrap"
+                    class="text-[11px]  font-semibold tracking-[0.04em] px-2.5 py-[3px] rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/25 whitespace-nowrap"
                     >Preview</span
                 >
             {/if}
@@ -661,7 +661,7 @@
             style="height: calc(100vh - 52px);"
         >
             <!-- ── Main ─────────────────────────────────────────────────────── -->
-            <main class="flex-1 overflow-y-auto flex flex-col scroll-smooth">
+            <main class="flex-1 max-w-7xl mx-auto overflow-y-auto flex flex-col scroll-smooth">
                 {#if !currentLesson && !quizOpen}
                     <!-- LANDING -->
                     <div class="relative overflow-hidden">

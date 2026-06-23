@@ -60,7 +60,7 @@
         <div class="hidden md:flex items-center space-x-4">
             <!-- Learn button -->
             <button
-                on:click={() => navigateTo("/learn")}
+                on:click={() => navigateTo("/course")}
                 class="bg-blue-700 text-white px-4 py-2 rounded-md font-medium hover:bg-blue-800 transition-colors"
             >
                 Learn

@@ -521,27 +521,20 @@
 </script>
 
 <!-- h-screen + overflow-hidden = left panel never moves -->
-<div class="h-screen bg-gray-50 font-noto-sans flex overflow-hidden">
+ <div class="min-h-screen bg-gradient-to-br from-gray-100 via-primary-50 to-primary-200 flex items-center justify-center p-4">
+
+  <!-- CARD: left + right panels -->
+  <div class="w-full  max-w-6xl  max-h-[600px] flex flex-col md:flex-row shadow-2xl rounded-2xl overflow-hidden">
+<!-- <div class="h-screen     shadow-2xl rounded-2xl bg-gradient-to-br from-gray-100 via-primary-50 to-primary-200 flex overflow-hidden pl-10"> -->
     <!-- ───── LEFT PANEL (sticky, never scrolls) ───── -->
     <div
-        class="hidden lg:flex lg:w-[38%] xl:w-[35%] bg-primary-950 flex-col justify-between p-10 relative overflow-hidden flex-shrink-0"
+        class="hidden  md:flex  md:w-2/5  bg-primary-500 flex-col justify-between p-5 relative overflow-hidden flex-shrink-0"
     >
-        <div
-            class="absolute top-0 right-0 w-64 h-64 rounded-full opacity-10 pointer-events-none"
-            style="background:radial-gradient(circle,#58bb47,transparent);transform:translate(40%,-40%)"
-        ></div>
-        <div
-            class="absolute bottom-0 left-0 w-80 h-80 rounded-full opacity-10 pointer-events-none"
-            style="background:radial-gradient(circle,#369525,transparent);transform:translate(-40%,40%)"
-        ></div>
-        <div
-            class="absolute inset-0 opacity-[0.03] pointer-events-none"
-            style="background-image:repeating-linear-gradient(0deg,#fff 0,#fff 1px,transparent 1px,transparent 40px),repeating-linear-gradient(90deg,#fff 0,#fff 1px,transparent 1px,transparent 40px)"
-        ></div>
-
-        <div class="relative z-10">
-            <div class="flex items-center gap-3 mb-12">
-                <div
+             <div class="absolute -top-16 -right-16 w-56 h-56 rounded-full bg-white/5 pointer-events-none"></div>
+      <div class="absolute -bottom-10 -left-10 w-40 h-40 rounded-full bg-white/5 pointer-events-none"></div>
+        <div class="relative z-">
+            <!-- <div class="flex items-center gap-3 mb-12"> -->
+                <!-- <div
                     class="w-9 h-9 rounded-lg bg-primary-500 flex items-center justify-center"
                 >
                     <Icon
@@ -551,9 +544,9 @@
                 </div>
                 <span
                     class="text-white font-roboto font-bold text-xl tracking-tight"
-                    >Learnify LMS</span
-                >
-            </div>
+                    >SkillsBlock</span
+                > -->
+            <!-- </div> -->
             <h1 class="text-white text-3xl font-bold leading-snug mb-4">
                 Start your<br />learning journey<br />today.
             </h1>
@@ -561,34 +554,32 @@
                 Join thousands of students accessing world-class courses from
                 top institutions.
             </p>
-        </div>
-
-        <div class="relative z-10 space-y-4">
+              <div class="relative z-10 mt-4 space-y-4">
             {#each [{ icon: "mdi:book-open-page-variant-outline", text: "Access 500+ curated courses" }, { icon: "mdi:certificate-outline", text: "Earn verified certificates" }, { icon: "mdi:account-group-outline", text: "Learn from expert instructors" }, { icon: "mdi:clock-outline", text: "Study at your own pace" }] as item}
                 <div class="flex items-center gap-3">
                     <div
-                        class="w-8 h-8 rounded-lg bg-primary-900 flex items-center justify-center flex-shrink-0"
+                        class="w-8 h-8 rounded-lg bg-primary-100 flex items-center justify-center flex-shrink-0"
                     >
                         <Icon
                             icon={item.icon}
-                            class="text-primary-400 text-base"
+                            class="text-primary-800 text-base"
                         />
                     </div>
                     <span class="text-primary-200 text-sm">{item.text}</span>
                 </div>
             {/each}
         </div>
-
-        <div class="relative z-10">
-            <p class="text-primary-700 text-xs">
-                © 2025 Learnify LMS. All rights reserved.
-            </p>
         </div>
+
+      
+
+     
     </div>
 
     <!-- ───── RIGHT PANEL (only this scrolls) ───── -->
-    <div class="flex-1 overflow-y-auto py-10 px-4 sm:px-8">
-        <div class="w-full max-w-[480px] mx-auto">
+    <!-- <div class="flex-1  bg-white overflow-y-auto py-10 px-4 md:px-4"> -->
+    <div class="  flex-1 w-full bg-white flex  p-8 md:p-12 overflow-y-auto">
+        <div class="w-full max-w-[480px]  ml-10">
             <div class="flex items-center gap-2.5 mb-8 lg:hidden">
                 <div
                     class="w-8 h-8 rounded-lg bg-primary-500 flex items-center justify-center"
@@ -604,13 +595,9 @@
             </div>
 
             <div class="mb-8">
-                <p
-                    class="text-primary-600 text-xs font-semibold tracking-widest uppercase mb-1.5"
-                >
-                    Get Started
-                </p>
+                
                 <h2
-                    class="text-heading text-2xl font-bold font-roboto leading-tight"
+                    class="text-heading text-primary-500 text-2xl font-bold  leading-tight"
                 >
                     Create your account
                 </h2>
@@ -618,7 +605,7 @@
                     Already have an account?
                     <a
                         href="/login"
-                        class="text-primary-600 font-semibold hover:text-primary-700 transition-colors"
+                        class="text-primary-500 font-semibold hover:text-primary-900 hover:underline transition-colors"
                         >Sign in</a
                     >
                 </p>
@@ -1350,6 +1337,7 @@
             </form>
         </div>
     </div>
+</div>
 </div>
 
 <Toaster position="bottom-right" richColors />

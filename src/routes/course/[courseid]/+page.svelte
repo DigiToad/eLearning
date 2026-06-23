@@ -27,24 +27,7 @@
     }}
 />
 
-<style>
-    /*
-      Transparent overlay sits on top of the video/iframe.
-      Blocks right-click on the player itself.
-      pointer-events: none lets clicks pass through to controls,
-      but we selectively block contextmenu via JS.
-    */
-    .video-wrapper {
-        position: relative;
-    }
 
-    .video-shield {
-        position: absolute;
-        inset: 0;
-        z-index: 10;
-        /* Allows clicks/play controls through, but intercepts right-click */
-        background: transparent;
-    }
-</style> 
-
+<div class=" bg-black  ">
 <Courseindi {data} />
+</div>
